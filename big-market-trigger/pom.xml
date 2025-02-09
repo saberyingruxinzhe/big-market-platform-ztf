@@ -30,10 +30,6 @@
         <!-- 系统模块 -->
         <dependency>
             <groupId>com.ztf</groupId>
-            <artifactId>big-market-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ztf</groupId>
             <artifactId>big-market-types</artifactId>
         </dependency>
         <dependency>
