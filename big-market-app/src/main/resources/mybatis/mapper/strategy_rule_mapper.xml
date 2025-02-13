@@ -26,4 +26,13 @@
         WHERE strategy_id = #{strategyId} AND rule_model = #{ruleModel}
     </select>
 
+    <select id="queryStrategyRuleValue" parameterType="com.ztf.infrastructure.persistent.po.StrategyRule" resultType="java.lang.String">
+        SELECT rule_value
+        FROM strategy_rule
+        where strategy_id = #{strategyId} and rule_model = #{ruleModel}
+        <if test="awardId != null">
+            and award_id = #{awardId}
+        </if>
+    </select>
+
 </mapper>
