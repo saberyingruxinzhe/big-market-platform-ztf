@@ -5,8 +5,6 @@ import com.ztf.domain.strategy.model.entity.RaffleAwardEntity;
 import com.ztf.domain.strategy.model.entity.RaffleFactorEntity;
 import com.ztf.domain.strategy.service.IRaffleStrategy;
 import com.ztf.domain.strategy.service.armory.IStrategyArmory;
-import com.ztf.domain.strategy.service.armory.IStrategyDispatch;
-import com.ztf.domain.strategy.service.rule.impl.RuleWeightLogicFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,16 +23,16 @@ public class RaffleStrategyTest {
     @Resource
     private IRaffleStrategy raffleStrategy;
 
-    @Resource
-    private RuleWeightLogicFilter ruleWeightLogicFilter;
+//    @Resource
+//    private RuleWeightLogicFilter ruleWeightLogicFilter;
 
     @Resource
     private IStrategyArmory strategyArmory;
 
-    @Before
-    public void setUp() {
-        ReflectionTestUtils.setField(ruleWeightLogicFilter, "userScore", 40500L);
-    }
+//    @Before
+//    public void setUp() {
+//        ReflectionTestUtils.setField(ruleWeightLogicFilter, "userScore", 40500L);
+//    }
 
 
     //装配

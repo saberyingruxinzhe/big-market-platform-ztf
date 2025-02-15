@@ -1,7 +1,7 @@
 package com.ztf.domain.strategy.model.valobj;
 
 
-import com.ztf.domain.strategy.service.rule.factory.DefaultLogicFactory;
+import com.ztf.domain.strategy.service.rule.filter.factory.DefaultLogicFactory;
 import com.ztf.types.common.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,50 +1,48 @@
-package com.ztf.domain.strategy.service.rule.impl;
+package com.ztf.domain.strategy.service.rule.chain.impl;
 
 import com.ztf.domain.strategy.model.entity.RuleActionEntity;
-import com.ztf.domain.strategy.model.entity.RuleMatterEntity;
 import com.ztf.domain.strategy.model.valobj.RuleLogicCheckTypeVO;
 import com.ztf.domain.strategy.repository.IStrategyRepository;
-import com.ztf.domain.strategy.service.annotation.LogicStrategy;
-import com.ztf.domain.strategy.service.rule.ILogicFilter;
-import com.ztf.domain.strategy.service.rule.factory.DefaultLogicFactory;
+import com.ztf.domain.strategy.service.armory.IStrategyDispatch;
+import com.ztf.domain.strategy.service.armory.StrategyArmoryDispatch;
+import com.ztf.domain.strategy.service.rule.chain.AbstractLogicChain;
+import com.ztf.domain.strategy.service.rule.filter.factory.DefaultLogicFactory;
 import com.ztf.types.common.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.*;
 
 @Slf4j
-@Component
-@LogicStrategy(logicMode = DefaultLogicFactory.LogicModel.RULE_WIGHT)
-public class RuleWeightLogicFilter implements ILogicFilter<RuleActionEntity.RaffleBeforeEntity> {
+@Component("rule_weight")
+public class RuleWeightLogicChain extends AbstractLogicChain {
+
     @Resource
     private IStrategyRepository repository;
 
+    @Resource
+    private IStrategyDispatch strategyDispatch;
+
     //这里先设定用户的积分为固定值，后期要到数据库中查询
     public Long userScore = 4500L;
+    @Autowired
+    private StrategyArmoryDispatch strategyArmoryDispatch;
 
 
     @Override
-    public RuleActionEntity filter(RuleMatterEntity ruleMatterEntity) {
+    public Integer logic(String userId, Long strategyId) {
 
-        String userId = ruleMatterEntity.getUserId();
-        Long strategyId = ruleMatterEntity.getStrategyId();
-        //这里获取到的ruleValue形式为4000:102,103,104,105 5000:102,103,104,105,106,107 6000:102,103,104,105,106,107,108,109
         String ruleValue = repository.queryStrategyRuleValue(
-                ruleMatterEntity.getStrategyId(),
-                ruleMatterEntity.getAwardId(),
-                ruleMatterEntity.getRuleModel()
+                strategyId, ruleModel()
         );
 
         //1.根据用户消耗的积分制，对比选取哪一种权重
         Map<Long, String> analyticalValueGroup = getAnalyticalValue(ruleValue);
         if(null == analyticalValueGroup || analyticalValueGroup.isEmpty()) {
             //放行
-            return RuleActionEntity.<RuleActionEntity.RaffleBeforeEntity>builder()
-                    .code(RuleLogicCheckTypeVO.ALLOW.getCode())
-                    .info(RuleLogicCheckTypeVO.ALLOW.getInfo())
-                    .build();
+            return next().logic(userId, strategyId);
         }
 
         //2.将map的key转换为list,并进行排序方便对比
@@ -59,23 +57,16 @@ public class RuleWeightLogicFilter implements ILogicFilter<RuleActionEntity.Raff
 
         if(null != nextValue) {
             //拦截
-            return RuleActionEntity.<RuleActionEntity.RaffleBeforeEntity>builder()
-                    .data(RuleActionEntity.RaffleBeforeEntity.builder()
-                            .strategyId(strategyId)
-                            .ruleWeightValueKey(analyticalValueGroup.get(nextValue))
-                            .build())
-                    .ruleModel(DefaultLogicFactory.LogicModel.RULE_WIGHT.getCode())
-                    .code(RuleLogicCheckTypeVO.TAKE_OVER.getCode())
-                    .info(RuleLogicCheckTypeVO.TAKE_OVER.getInfo())
-                    .build();
+            //这里就直接计算出来抽到的奖品了，不用走默认的抽奖责任链节点了，
+            //因为默认的责任链的logic使用的repository.getRandomAwardId是没有权重作为入参的
+            //这个方法原本应该在AbstractRaffleStrategy中执行的，现在放到这里了
+            Integer awardId = strategyDispatch.getRandomAwardId(strategyId, analyticalValueGroup.get(nextValue));
+            log.info("抽奖责任链-权重接管 userId: {} strategyId: {} ruleModel: {} awardId: {}", userId, strategyId, ruleModel(), awardId);
+            return awardId;
         }
 
         //这里放行是因为用户积分还未达到拦截的标准
-        return RuleActionEntity.<RuleActionEntity.RaffleBeforeEntity>builder()
-                .code(RuleLogicCheckTypeVO.ALLOW.getCode())
-                .info(RuleLogicCheckTypeVO.ALLOW.getInfo())
-                .build();
-
+        return next().logic(userId, strategyId);
     }
 
     //这个方法获取到的map中键值对的形式如下：key为4000，value为4000:102,103,104,105
@@ -94,5 +85,10 @@ public class RuleWeightLogicFilter implements ILogicFilter<RuleActionEntity.Raff
             ruleValueMap.put(Long.parseLong(parts[0]), ruleValueKey);
         }
         return ruleValueMap;
+    }
+
+    @Override
+    protected String ruleModel() {
+        return "rule_weight";
     }
 }

@@ -27,5 +27,8 @@ public interface IStrategyRepository {
 
     String queryStrategyRuleValue(Long strategyId, Integer awardId, String ruleModel);
 
+    //这个方法是为了前置过滤准备的，因为前置过滤没有奖品id
+    String queryStrategyRuleValue(Long strategyId, String ruleModel);
+
     StrategyAwardRuleModelVO queryStrategyAwardRuleModelVO(Long strategyId, Integer awardId);
 }
