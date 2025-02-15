@@ -31,6 +31,7 @@ public class StrategyEntity {
     //如果rule_model是rule_weight才会返回，不然返回null
     public String getRuleWeight(){
         String[] ruleModels = this.ruleModels();
+        if (null == ruleModels) return null;
         for(String ruleModel : ruleModels){
             if("rule_weight".equals(ruleModel)){
                 return ruleModel;

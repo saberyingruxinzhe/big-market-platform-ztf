@@ -51,4 +51,15 @@ public class AwardDaoTest {
         log.info("测试结果：{}", JSON.toJSONString(strategyRuleRes));
     }
 
+    @Test
+    public void test_queryStrategyRuleValue(){
+        StrategyRule strategyRuleReq = new StrategyRule();
+        strategyRuleReq.setStrategyId(100003L);
+        strategyRuleReq.setRuleModel("rule_lock");
+        strategyRuleReq.setAwardId(107);
+        String ruleValue = strategyRuleDao.queryStrategyRuleValue(strategyRuleReq);
+        log.info("测试结果：{}", JSON.toJSONString(ruleValue));
+    }
+
+
 }

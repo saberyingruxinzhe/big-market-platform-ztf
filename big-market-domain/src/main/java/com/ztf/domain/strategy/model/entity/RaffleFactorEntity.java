@@ -16,4 +16,6 @@ public class RaffleFactorEntity {
     private String userId;
     //策略id
     private Long strategyId;
+    //奖品id，奖品id是为了抽奖中过滤的，因为抽奖中过滤是已经获得了奖品id了
+    private Integer awardId;
 }

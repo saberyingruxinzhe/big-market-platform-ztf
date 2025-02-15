@@ -3,6 +3,7 @@ package com.ztf.infrastructure.persistent.repository;
 import com.ztf.domain.strategy.model.entity.StrategyAwardEntity;
 import com.ztf.domain.strategy.model.entity.StrategyEntity;
 import com.ztf.domain.strategy.model.entity.StrategyRuleEntity;
+import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
 import com.ztf.domain.strategy.repository.IStrategyRepository;
 import com.ztf.infrastructure.persistent.dao.IStrategyAwardDao;
 import com.ztf.infrastructure.persistent.dao.IStrategyDao;
@@ -118,6 +119,18 @@ public class StrategyRepository implements IStrategyRepository {
         strategyRuleReq.setAwardId(awardId);
         strategyRuleReq.setRuleModel(ruleModel);
         return strategyRuleDao.queryStrategyRuleValue(strategyRuleReq);
+
+    }
+
+    @Override
+    public StrategyAwardRuleModelVO queryStrategyAwardRuleModelVO(Long strategyId, Integer awardId) {
+        //为什么这里使用StrategyAward来进行查询，因为这里要从strategy_award表格中进行查询，所以这里使用StrategyAward
+        //为什么是从strategy_award表中进行查询，因为strategy_rule是需要三个属性才能确定一个数据，而其中一个就是要查询到ruleModel
+        StrategyAward strategyAward = new StrategyAward();
+        strategyAward.setStrategyId(strategyId);
+        strategyAward.setAwardId(awardId);
+        String ruleModels = strategyAwardDao.queryStrategyAwardRuleModels(strategyAward);
+        return StrategyAwardRuleModelVO.builder().ruleModels(ruleModels).build();
 
     }
 

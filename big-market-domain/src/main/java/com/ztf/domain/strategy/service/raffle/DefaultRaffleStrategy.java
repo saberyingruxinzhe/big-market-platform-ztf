@@ -36,14 +36,19 @@ public class DefaultRaffleStrategy extends AbstractRaffleStrategy {
             RaffleFactorEntity raffleFactorEntity,
             String... logics
     ) {
+        if (logics == null || 0 == logics.length) return RuleActionEntity.<RuleActionEntity.RaffleBeforeEntity>builder()
+                .code(RuleLogicCheckTypeVO.ALLOW.getCode())
+                .info(RuleLogicCheckTypeVO.ALLOW.getInfo())
+                .build();
+
         Map<String, ILogicFilter<RuleActionEntity.RaffleBeforeEntity>> logicFilterGroup = logicFactory.openLogicFilter();
         
         //先过滤黑名单
-        String ruleBackList = Arrays.stream(logics)
+        String ruleBlackList = Arrays.stream(logics)
                 .filter(str -> str.contains(DefaultLogicFactory.LogicModel.RULE_BLACKLIST.getCode()))
                 .findFirst()
                 .orElse(null);
-        if(StringUtils.isBlank(ruleBackList)){
+        if(StringUtils.isNotBlank(ruleBlackList)){
             ILogicFilter<RuleActionEntity.RaffleBeforeEntity> logicFilter = 
                     logicFilterGroup.get(DefaultLogicFactory.LogicModel.RULE_BLACKLIST.getCode());
             RuleMatterEntity ruleMatterEntity = new RuleMatterEntity();
@@ -76,5 +81,35 @@ public class DefaultRaffleStrategy extends AbstractRaffleStrategy {
             if (!RuleLogicCheckTypeVO.ALLOW.getCode().equals(ruleActionEntity.getCode())) return ruleActionEntity;
         }
         return ruleActionEntity;
+    }
+
+    @Override
+    protected RuleActionEntity<RuleActionEntity.RaffleCenterEntity> doCheckRaffleCenterLogic(RaffleFactorEntity raffleFactorEntity, String... logics) {
+        if(logics == null || logics.length == 0){
+            return RuleActionEntity.<RuleActionEntity.RaffleCenterEntity>builder()
+                    .code(RuleLogicCheckTypeVO.ALLOW.getCode())
+                    .info(RuleLogicCheckTypeVO.ALLOW.getInfo())
+                    .build();
+        }
+
+        Map<String, ILogicFilter<RuleActionEntity.RaffleCenterEntity>> logicFilterGroup = logicFactory.openLogicFilter();
+
+        RuleActionEntity<RuleActionEntity.RaffleCenterEntity> ruleActionEntity = null;
+        //为什么这里使用for循环，如果其中一个元素拦截的话直接就返回，那么for循环还有什么意义呢。
+        for(String ruleModel: logics){
+            ILogicFilter<RuleActionEntity.RaffleCenterEntity> logicFilter = logicFilterGroup.get(ruleModel);
+            RuleMatterEntity ruleMatterEntity = new RuleMatterEntity();
+            ruleMatterEntity.setUserId(raffleFactorEntity.getUserId());
+            ruleMatterEntity.setAwardId(raffleFactorEntity.getAwardId());
+            ruleMatterEntity.setStrategyId(raffleFactorEntity.getStrategyId());
+            ruleMatterEntity.setRuleModel(ruleModel);
+
+            ruleActionEntity = logicFilter.filter(ruleMatterEntity);
+            // 非放行结果则顺序过滤
+            log.info("抽奖中规则过滤 userId: {} ruleModel: {} code: {} info: {}", raffleFactorEntity.getUserId(), ruleModel, ruleActionEntity.getCode(), ruleActionEntity.getInfo());
+            if (!RuleLogicCheckTypeVO.ALLOW.getCode().equals(ruleActionEntity.getCode())) return ruleActionEntity;
+        }
+        return ruleActionEntity;
+
     }
 }
