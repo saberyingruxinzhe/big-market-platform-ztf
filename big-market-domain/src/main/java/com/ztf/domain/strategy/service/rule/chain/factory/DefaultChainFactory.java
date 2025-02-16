@@ -3,7 +3,7 @@ package com.ztf.domain.strategy.service.rule.chain.factory;
 import com.ztf.domain.strategy.model.entity.StrategyEntity;
 import com.ztf.domain.strategy.repository.IStrategyRepository;
 import com.ztf.domain.strategy.service.rule.chain.ILogicChain;
-import com.ztf.domain.strategy.service.rule.chain.ILogicChainArmory;
+import lombok.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,5 +45,31 @@ public class DefaultChainFactory {
         //责任链最后再添加上默认的责任链节点
         current.appendNext(logicChainGroup.get("default"));
         return logicChain;
+    }
+
+    //上一节中是直接返回奖品id，这里将返回的类型进行精细化、模范化处理
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StrategyAwardVO {
+        /** 抽奖奖品ID - 内部流转使用 */
+        private Integer awardId;
+        /**  */
+        private String logicModel;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum LogicModel {
+
+        RULE_DEFAULT("rule_default", "默认抽奖"),
+        RULE_BLACKLIST("rule_blacklist", "黑名单抽奖"),
+        RULE_WEIGHT("rule_weight", "权重规则"),
+        ;
+
+        private final String code;
+        private final String info;
+
     }
 }

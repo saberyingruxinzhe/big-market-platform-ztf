@@ -2,6 +2,7 @@ package com.ztf.domain.strategy.service.rule.chain.impl;
 
 import com.ztf.domain.strategy.repository.IStrategyRepository;
 import com.ztf.domain.strategy.service.rule.chain.AbstractLogicChain;
+import com.ztf.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
 import com.ztf.types.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class BlackListLogicChain extends AbstractLogicChain {
     private IStrategyRepository repository;
 
     @Override
-    public Integer logic(String userId, Long strategyId) {
+    public DefaultChainFactory.StrategyAwardVO logic(String userId, Long strategyId) {
         log.info("抽奖责任链-黑名单开始 userId: {} strategyId: {} ruleModel: {}", userId, strategyId, ruleModel());
 
         //这里直接获取ruleValues，不需要从获取StrategyEntity开始，获取StrategyEntity是工厂类做的事
@@ -35,7 +36,10 @@ public class BlackListLogicChain extends AbstractLogicChain {
             if(userId.equals(blackId)){
                 //如果是黑名单用户就拦截
                 log.info("抽奖责任链-黑名单接管 userId: {} strategyId: {} ruleModel: {} awardId: {}", userId, strategyId, ruleModel(), awardId);
-                return awardId;
+                return DefaultChainFactory.StrategyAwardVO.builder()
+                        .awardId(awardId)
+                        .logicModel(ruleModel())
+                        .build();
             }
         }
 
@@ -47,6 +51,6 @@ public class BlackListLogicChain extends AbstractLogicChain {
     //这个方法其实有点多此一举？只有在这个类中使用，或者是为了后续的扩展功能的考虑
     @Override
     protected String ruleModel() {
-        return "rule_blacklist";
+        return DefaultChainFactory.LogicModel.RULE_BLACKLIST.getCode();
     }
 }

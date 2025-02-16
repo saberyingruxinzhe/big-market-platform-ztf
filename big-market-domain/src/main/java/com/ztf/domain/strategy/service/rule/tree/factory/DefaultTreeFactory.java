@@ -33,7 +33,7 @@ public class DefaultTreeFactory {
     @NoArgsConstructor
     public static class TreeActionEntity{
         private RuleLogicCheckTypeVO ruleLogicCheckType;
-        private StrategyAwardData strategyAwardData;
+        private StrategyAwardVO strategyAwardVO;
     }
 
     //这里存放的ruleValue值是指？？？
@@ -41,9 +41,11 @@ public class DefaultTreeFactory {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class StrategyAwardData{
+    public static class StrategyAwardVO{
         private Integer awardId;
         private String awardRuleValue;
     }
+
+
 
 }

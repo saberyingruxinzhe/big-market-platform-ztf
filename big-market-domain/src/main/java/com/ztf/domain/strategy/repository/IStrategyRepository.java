@@ -4,6 +4,7 @@ package com.ztf.domain.strategy.repository;
 import com.ztf.domain.strategy.model.entity.StrategyAwardEntity;
 import com.ztf.domain.strategy.model.entity.StrategyEntity;
 import com.ztf.domain.strategy.model.entity.StrategyRuleEntity;
+import com.ztf.domain.strategy.model.valobj.RuleTreeVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
 
 import java.util.List;
@@ -31,4 +32,7 @@ public interface IStrategyRepository {
     String queryStrategyRuleValue(Long strategyId, String ruleModel);
 
     StrategyAwardRuleModelVO queryStrategyAwardRuleModelVO(Long strategyId, Integer awardId);
+
+    //根据规则树id，获取到树结构信息（这里传入的树id形式为rule_lock,rule_luck_award）
+    RuleTreeVO queryRuleTreeVOByTreeId(String treeId);
 }
