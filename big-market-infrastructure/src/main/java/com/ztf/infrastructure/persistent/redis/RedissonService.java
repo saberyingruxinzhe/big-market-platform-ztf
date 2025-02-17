@@ -47,6 +47,16 @@ public class RedissonService implements IRedisService {
     }
 
     @Override
+    public void setAtomicLong(String key, long value) {
+        redissonClient.getAtomicLong(key).set(value);
+    }
+
+    @Override
+    public Long getAtomicLong(String key) {
+        return redissonClient.getAtomicLong(key).get();
+    }
+
+    @Override
     public long incr(String key) {
         return redissonClient.getAtomicLong(key).incrementAndGet();
     }
@@ -156,5 +166,9 @@ public class RedissonService implements IRedisService {
         return redissonClient.getBloomFilter(key);
     }
 
+    @Override
+    public Boolean setNx(String key) {
+        return redissonClient.getBucket(key).trySet("lock");
+    }
 
 }

@@ -6,6 +6,7 @@ import com.ztf.domain.strategy.model.entity.StrategyEntity;
 import com.ztf.domain.strategy.model.entity.StrategyRuleEntity;
 import com.ztf.domain.strategy.model.valobj.RuleTreeVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
+import com.ztf.domain.strategy.model.valobj.StrategyAwardStockKeyVO;
 
 import java.util.List;
 import java.util.Map;
@@ -35,4 +36,23 @@ public interface IStrategyRepository {
 
     //根据规则树id，获取到树结构信息（这里传入的树id形式为rule_lock,rule_luck_award）
     RuleTreeVO queryRuleTreeVOByTreeId(String treeId);
+
+    //缓存奖品库存
+    void cacheStrategyAwardCount(String cacheKey, Integer awardCount);
+
+    //decr方式扣减库存,注意这里扣减的是redis中缓存的库存
+    Boolean subtractionAwardStock(String cacheKey);
+
+
+    //写入奖品库存消费队列
+    void awardStockConsumeSendQueue(StrategyAwardStockKeyVO strategyAwardStockKeyVO);
+
+    //获取奖品库消费队列中的StrategyAwardStockKeyVO对象，
+    //这个对象是在扣减redis库存成功之后加入到奖品库存消费队列中的
+    StrategyAwardStockKeyVO takeQueueValue() throws InterruptedException;
+
+    //更新奖品库存消耗，这里是更新正真的数据库的库存
+    void updateStrategyAwardStock(Long strategyId, Integer awardId);
+
+
 }
