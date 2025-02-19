@@ -19,6 +19,12 @@ public class StrategyAwardEntity {
     //抽奖奖品ID - 内部流转使用
     private Integer awardId;
 
+    //抽奖奖品标题
+    private String awardTitle;
+
+    //抽奖奖品副标题
+    private String awardSubtitle;
+
     //奖品库存总量
     private Integer awardCount;
 
@@ -27,5 +33,8 @@ public class StrategyAwardEntity {
 
     //奖品中奖概率
     private BigDecimal awardRate;
+
+    //排序，用来确定在抽奖圆盘或者九宫格中的位置
+    private Integer sort;
 
 }

@@ -1,10 +1,13 @@
 package com.ztf.domain.strategy.service.raffle;
 
+import com.ztf.domain.strategy.model.entity.StrategyAwardEntity;
 import com.ztf.domain.strategy.model.valobj.RuleTreeVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardStockKeyVO;
 import com.ztf.domain.strategy.repository.IStrategyRepository;
 import com.ztf.domain.strategy.service.AbstractRaffleStrategy;
+import com.ztf.domain.strategy.service.IRaffleAward;
+import com.ztf.domain.strategy.service.IRaffleStock;
 import com.ztf.domain.strategy.service.armory.IStrategyDispatch;
 import com.ztf.domain.strategy.service.rule.chain.ILogicChain;
 import com.ztf.domain.strategy.service.rule.chain.factory.DefaultChainFactory;
@@ -13,11 +16,13 @@ import com.ztf.domain.strategy.service.rule.tree.factory.engine.IDecisionTreeEng
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 //是这个类添加@Service注解，而不是AbstractRaffleStrategy类
 @Slf4j
 @Service
-public class DefaultRaffleStrategy extends AbstractRaffleStrategy {
+public class DefaultRaffleStrategy extends AbstractRaffleStrategy implements IRaffleStock, IRaffleAward {
 
     public DefaultRaffleStrategy(IStrategyRepository repository, IStrategyDispatch strategyDispatch, DefaultChainFactory defaultChainFactory, DefaultTreeFactory defaultTreeFactory) {
         super(repository, strategyDispatch, defaultChainFactory, defaultTreeFactory);
@@ -52,6 +57,11 @@ public class DefaultRaffleStrategy extends AbstractRaffleStrategy {
     @Override
     public void updateStrategyAwardStock(Long strategyId, Integer awardId) {
         repository.updateStrategyAwardStock(strategyId, awardId);
+    }
+
+    @Override
+    public List<StrategyAwardEntity> queryRaffleStrategyAwardList(Long strategyId) {
+        return repository.queryStrategyAwardList(strategyId);
     }
 
 

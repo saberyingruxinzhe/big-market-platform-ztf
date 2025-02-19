@@ -54,5 +54,6 @@ public interface IStrategyRepository {
     //更新奖品库存消耗，这里是更新正真的数据库的库存
     void updateStrategyAwardStock(Long strategyId, Integer awardId);
 
-
+    //根据策略id + 奖品id的唯一值组合获取到奖品信息
+    StrategyAwardEntity queryStrategyAwardEntity(Long strategyId, Integer awardId);
 }
