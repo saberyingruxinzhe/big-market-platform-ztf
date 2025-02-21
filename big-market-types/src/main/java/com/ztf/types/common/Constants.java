@@ -12,6 +12,8 @@ public class Constants {
 
         //有两个作用：从strategy_award表格中通过和strategyId结合获得奖品列表，以及通过和strategyId和awardId结合获取单个奖品
         public static String STRATEGY_AWARD_KEY = "big_market_strategy_award_key_";
+        //用来从缓存中获取到strategy_award信息，用于前端转盘或者九宫格奖品信息显示的
+        public static String STRATEGY_AWARD_LIST_KEY = "big_market_strategy_award_list_key_";
         public static String STRATEGY_RATE_TABLE_KEY = "big_market_strategy_rate_table_key_";
         public static String STRATEGY_RATE_RANGE_KEY = "big_market_strategy_rate_range_key_";
         public static String RULE_TREE_VO_KEY = "rule_tree_vo_key_";

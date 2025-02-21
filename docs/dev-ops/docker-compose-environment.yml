@@ -1,23 +1,20 @@
-# 命令执行 docker-compose up -d
+# 命令执行 docker-compose -f docker-compose-environment.yml up -d
 version: '3.9'
 services:
   mysql:
-    image: mysql:8.0.32
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/mysql:8.0.32
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
       TZ: Asia/Shanghai
-      # MYSQL_ALLOW_EMPTY_PASSWORD: 'yes' # 可配置无密码，注意配置 SPRING_DATASOURCE_PASSWORD=
       MYSQL_ROOT_PASSWORD: 123456
-      # MYSQL_USER: xfgl
-      # MYSQL_PASSWORD: RTry78@#ww
     networks:
       - my-network
     depends_on:
       - mysql-job-dbdata
     ports:
-      - "13306:3306"
+      - "3306:3306"
     volumes:
       - ./mysql/sql:/docker-entrypoint-initdb.d
     healthcheck:
@@ -31,14 +28,14 @@ services:
 
   # 自动加载数据
   mysql-job-dbdata:
-    image: alpine:3.18.2
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/alpine:3.18.2
     container_name: mysql-job-dbdata
     volumes:
       - /var/lib/mysql
 
   # phpmyadmin https://hub.docker.com/_/phpmyadmin
   phpmyadmin:
-    image: phpmyadmin:5.2.1
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/phpmyadmin:5.2.1
     container_name: phpmyadmin
     hostname: phpmyadmin
     ports:
@@ -55,13 +52,13 @@ services:
 
   # Redis
   redis:
-    image: redis:6.2
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/redis:6.2
     container_name: redis
     restart: always
     hostname: redis
     privileged: true
     ports:
-      - 16379:6379
+      - 6379:6379
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -75,7 +72,7 @@ services:
 
   # RedisAdmin https://github.com/joeferner/redis-commander
   redis-admin:
-    image: spryker/redis-commander:0.8.0
+    image: registry.cn-hangzhou.aliyuncs.com/xfg-studio/redis-commander:0.8.0
     container_name: redis-admin
     hostname: redis-commander
     restart: always

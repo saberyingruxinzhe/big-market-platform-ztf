@@ -1,8 +1,9 @@
 # 基础镜像
-FROM openjdk:8-jre-slim
+FROM docker.io/library/openjdk:8-jre-slim
 
 # 作者
-MAINTAINER xiaofuge
+MAINTAINER ztf
+
 
 # 配置
 ENV PARAMS=""
