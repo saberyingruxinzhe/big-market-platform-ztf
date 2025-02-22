@@ -92,6 +92,10 @@
             <groupId>com.ztf</groupId>
             <artifactId>big-market-infrastructure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ztf</groupId>
+            <artifactId>big-market-domain</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
