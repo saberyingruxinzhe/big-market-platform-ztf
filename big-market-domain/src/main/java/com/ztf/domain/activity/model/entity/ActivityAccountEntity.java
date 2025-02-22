@@ -1,17 +1,16 @@
-package com.ztf.infrastructure.persistent.po;
+package com.ztf.domain.activity.model.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
-//抽奖活动账户表 持久化对象
+//活动账户实体对象
 @Data
-public class RaffleActivityAccount {
-
-    /**
-     * 自增ID
-     */
-    private Long id;
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ActivityAccountEntity {
 
     /**
      * 用户ID
@@ -52,15 +51,5 @@ public class RaffleActivityAccount {
      * 月次数-剩余
      */
     private Integer monthCountSurplus;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
 
 }

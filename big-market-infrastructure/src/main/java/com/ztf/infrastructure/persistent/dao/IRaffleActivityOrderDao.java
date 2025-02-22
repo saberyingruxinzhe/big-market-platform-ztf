@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-//抽奖活动单
+//抽奖活动单Dao
 @Mapper
 @DBRouterStrategy(splitTable = true)
 public interface IRaffleActivityOrderDao {
