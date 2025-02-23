@@ -8,6 +8,17 @@ public class Constants {
     public final static String UNDERLINE = "_";
 
     public static class RedisKey {
+        /**
+         * 活动领域
+         */
+        public static String ACTIVITY_KEY = "big_market_activity_key_";
+        public static String ACTIVITY_SKU_KEY = "big_market_activity_sku_key_";
+        public static String ACTIVITY_COUNT_KEY = "big_market_activity_count_key_";
+
+
+        /**
+         * 策略领域
+         */
         public static String STRATEGY_KEY = "big_market_strategy_key_";
 
         //有两个作用：从strategy_award表格中通过和strategyId结合获得奖品列表，以及通过和strategyId和awardId结合获取单个奖品

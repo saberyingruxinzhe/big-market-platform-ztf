@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.util.Date;
 
-//抽奖活动次数配置表
+//抽奖活动次数配置表 持久化对象
 @Data
 public class RaffleActivityCount {
 
@@ -44,3 +44,5 @@ public class RaffleActivityCount {
     private Date updateTime;
 
 }
+
+

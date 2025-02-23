@@ -1,4 +1,4 @@
-package com.ztf.test.domain;
+package com.ztf.test.domain.strategy;
 
 import com.alibaba.fastjson.JSON;
 import com.ztf.domain.strategy.model.entity.RaffleAwardEntity;
