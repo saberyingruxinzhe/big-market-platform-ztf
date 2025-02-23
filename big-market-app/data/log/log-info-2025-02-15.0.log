@@ -251,7 +251,7 @@
 25-02-15.21:16:36.553 [main            ] INFO  LogicChainTest         - 测试结果：true
 25-02-15.21:16:36.557 [main            ] INFO  BlackListLogicChain    - 抽奖责任链-黑名单开始 userId: user001 strategyId: 100003 ruleModel: rule_blacklist
 25-02-15.21:17:45.383 [HikariPool-1 housekeeper] WARN  HikariPool             - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m4s978ms691µs301ns).
-25-02-15.21:17:45.449 [main            ] WARN  TestContextManager     - Caught exception while invoking 'afterTestClass' callback on TestExecutionListener [org.springframework.test.context.event.EventPublishingTestExecutionListener@64c63c79] for test class [class com.ztf.test.domain.LogicChainTest]
+25-02-15.21:17:45.449 [main            ] WARN  TestContextManager     - Caught exception while invoking 'afterTestClass' callback on TestExecutionListener [org.springframework.test.context.event.EventPublishingTestExecutionListener@64c63c79] for test class [class com.ztf.test.domain.strategy.LogicChainTest]
 org.springframework.beans.factory.BeanCreationNotAllowedException: Error creating bean with name 'startupTimeMetrics': Singleton bean creation not allowed while singletons of this factory are in destruction (Do not request a bean from a BeanFactory in a destroy method implementation!)
 	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:220)
 	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)

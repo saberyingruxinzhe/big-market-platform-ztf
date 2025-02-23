@@ -1,4 +1,4 @@
-package com.ztf.test.domain;
+package com.ztf.test.domain.strategy;
 
 import com.ztf.domain.strategy.model.valobj.*;
 import com.ztf.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;

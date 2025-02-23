@@ -1,17 +1,19 @@
-package com.ztf.infrastructure.persistent.po;
+package com.ztf.domain.activity.model.entity;
 
+import com.ztf.domain.activity.model.valobj.OrderStateVO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-//抽奖活动单 持久化对象
+//活动参与实体对象
 @Data
-public class RaffleActivityOrder {
-
-    /**
-     * 自增ID
-     */
-    private Long id;
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class ActivityOrderEntity {
 
     /**
      * 用户ID
@@ -66,7 +68,7 @@ public class RaffleActivityOrder {
     /**
      * 订单状态
      */
-    private String state;
+    private OrderStateVO state;
 
     /**
      * 业务仿重ID - 外部透传的，确保幂等
@@ -74,15 +76,4 @@ public class RaffleActivityOrder {
      * 这里会传入这个属性，这个属性在数据库中的类型为unique的，所以会防重
      */
     private String outBusinessNo;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
 }
