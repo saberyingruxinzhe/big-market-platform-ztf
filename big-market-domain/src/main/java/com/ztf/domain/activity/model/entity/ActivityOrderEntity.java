@@ -21,6 +21,11 @@ public class ActivityOrderEntity {
     private String userId;
 
     /**
+     * sku
+     */
+    private Long sku;
+
+    /**
      * 活动ID
      */
     private Long activityId;
@@ -65,4 +70,10 @@ public class ActivityOrderEntity {
      */
     private OrderStateVO state;
 
+    /**
+     * 业务仿重ID - 外部透传的，确保幂等
+     * 这个意思为，如果网络发生问题，那么可能会对数据库请求两次增加次数的请求
+     * 这里会传入这个属性，这个属性在数据库中的类型为unique的，所以会防重
+     */
+    private String outBusinessNo;
 }
