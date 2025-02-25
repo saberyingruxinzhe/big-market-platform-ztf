@@ -1,13 +1,16 @@
 package com.ztf.infrastructure.persistent.repository;
 
 import cn.bugstack.middleware.db.router.strategy.IDBRouterStrategy;
+import com.ztf.domain.activity.event.ActivitySkuStockZeroMessageEvent;
 import com.ztf.domain.activity.model.aggregate.CreateOrderAggregate;
 import com.ztf.domain.activity.model.entity.ActivityCountEntity;
 import com.ztf.domain.activity.model.entity.ActivityEntity;
 import com.ztf.domain.activity.model.entity.ActivityOrderEntity;
 import com.ztf.domain.activity.model.entity.ActivitySkuEntity;
+import com.ztf.domain.activity.model.valobj.ActivitySkuStockKeyVO;
 import com.ztf.domain.activity.model.valobj.ActivityStateVO;
 import com.ztf.domain.activity.repository.IActivityRepository;
+import com.ztf.infrastructure.event.EventPublisher;
 import com.ztf.infrastructure.persistent.dao.*;
 import com.ztf.infrastructure.persistent.po.*;
 import com.ztf.infrastructure.persistent.redis.RedissonService;
@@ -15,12 +18,15 @@ import com.ztf.types.common.Constants;
 import com.ztf.types.enums.ResponseCode;
 import com.ztf.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Repository
@@ -41,6 +47,10 @@ public class ActivityRepository implements IActivityRepository {
     private TransactionTemplate transactionTemplate;
     @Resource
     private IDBRouterStrategy dbRouter;
+    @Resource
+    private ActivitySkuStockZeroMessageEvent activitySkuStockZeroMessageEvent;
+    @Resource
+    private EventPublisher eventPublisher;
 
 
     @Override
@@ -170,5 +180,82 @@ public class ActivityRepository implements IActivityRepository {
             //清理ThreadLocal
             dbRouter.clear();
         }
+    }
+
+    @Override
+    public void cacheActivitySkuStockCount(String cacheKey, Integer stockCount) {
+        if(redissonService.isExists(cacheKey)){
+            return;
+        }
+        redissonService.setAtomicLong(cacheKey, stockCount);
+    }
+
+    @Override
+    public boolean subtractionActivitySkuStock(Long sku, String cacheKey, Date endDateTime) {
+        //这里使用decr来扣减redis中的库存，但是后面依旧需要对redis中的库存加锁，
+        //加锁并不是为了防止多个线程的争抢，而是为了防止异常的数据恢复
+        long surplus = redissonService.decr(cacheKey);
+        if(surplus == 0){
+            //redis中的库存如果没有了，就发送mq消息更新数据库
+            eventPublisher.publish(activitySkuStockZeroMessageEvent.topic(), activitySkuStockZeroMessageEvent.buildEventMessage(sku));
+            return false;
+        } else if(surplus < 0){
+            //库存小于0，首先恢复成0
+            redissonService.setAtomicLong(cacheKey, 0);
+            return false;
+        }
+        // 1. 按照cacheKey decr 后的值，如 99、98、97 和 key 组成为库存锁的key进行使用。
+        // 2. 加锁为了兜底，如果后续有恢复库存，手动处理等【运营是人来操作，会有这种情况发放，系统要做防护】，也不会超卖。因为所有的可用库存key，都被加锁了。
+        // 3. 设置加锁时间为活动到期 + 延迟1天
+        String lockKey = cacheKey + Constants.UNDERLINE + surplus;
+        //计算过期时间，到活动截止日期 + 1为止
+        long expireMillis = endDateTime.getTime() - System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1);
+        Boolean lock = redissonService.setNx(lockKey, expireMillis, TimeUnit.MILLISECONDS);
+        if (!lock) {
+            log.info("活动sku库存加锁失败 {}", lockKey);
+        }
+        return lock;
+    }
+
+    //发送延迟队列，就是如果扣减库存成功，也就是上一个方法返回为true，
+    //这个时候redis中的库存已经更新了，需要取更新数据的库存，这个时候就需要一个延迟队列
+    @Override
+    public void activitySkuStockConsumeSendQueue(ActivitySkuStockKeyVO activitySkuStockKeyVO) {
+        String cacheKey = Constants.RedisKey.ACTIVITY_SKU_COUNT_QUERY_KEY;
+        RBlockingQueue<ActivitySkuStockKeyVO> blockingQueue = redissonService.getBlockingQueue(cacheKey);
+        RDelayedQueue<ActivitySkuStockKeyVO> delayedQueue = redissonService.getDelayedQueue(blockingQueue);
+        delayedQueue.offer(activitySkuStockKeyVO, 3, TimeUnit.SECONDS);
+    }
+
+    //用来从延迟队列中获取到对应的ActivitySkuStockKeyVO【其中包含sku以及activityID】
+    @Override
+    public ActivitySkuStockKeyVO takeQueueValue() {
+        String cacheKey = Constants.RedisKey.ACTIVITY_SKU_COUNT_QUERY_KEY;
+        RBlockingQueue<ActivitySkuStockKeyVO> destinationQueue = redissonService.getBlockingQueue(cacheKey);
+        return destinationQueue.poll();
+    }
+
+    //清空延迟队列
+    //为什么要清空延迟队列
+    //
+    @Override
+    public void clearQueueValue() {
+        String cacheKey = Constants.RedisKey.ACTIVITY_SKU_COUNT_QUERY_KEY;
+        RBlockingQueue<ActivitySkuStockKeyVO> destinationQueue = redissonService.getBlockingQueue(cacheKey);
+        destinationQueue.clear();
+    }
+
+    //更新sku库存
+    //逻辑为将对应sku的商品库存减一
+    @Override
+    public void updateActivitySkuStock(Long sku) {
+        raffleActivitySkuDao.updateActivitySkuStock(sku);
+    }
+
+    //清空sku库存
+    //逻辑为将对应sku的商品库存清空
+    @Override
+    public void clearActivitySkuStock(Long sku) {
+        raffleActivitySkuDao.clearActivitySkuStock(sku);
     }
 }
