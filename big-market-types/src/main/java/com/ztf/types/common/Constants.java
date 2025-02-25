@@ -16,6 +16,11 @@ public class Constants {
         public static String ACTIVITY_COUNT_KEY = "big_market_activity_count_key_";
 
 
+        //这个是用来发送延迟队列用来获取到延迟队列的【延迟队列也是从redis中获取的】
+        public static String ACTIVITY_SKU_COUNT_QUERY_KEY = "activity_sku_count_query_key";
+        //预热sku库存使用的key
+        public static String ACTIVITY_SKU_STOCK_COUNT_KEY = "activity_sku_stock_count_key_";
+
         /**
          * 策略领域
          */

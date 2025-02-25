@@ -1,0 +1,48 @@
+package com.ztf.domain.activity.service.armory;
+
+import com.ztf.domain.activity.model.entity.ActivitySkuEntity;
+import com.ztf.domain.activity.repository.IActivityRepository;
+import com.ztf.types.common.Constants;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Date;
+
+@Slf4j
+@Service
+public class ActivityArmory implements IActivityArmory, IActivityDispatch{
+    @Resource
+    private IActivityRepository activityRepository;
+
+    @Override
+    public boolean assembleActivitySku(Long sku) {
+        //预热活动sku库存
+        ActivitySkuEntity activitySkuEntity = activityRepository.queryActivitySku(sku);
+        cacheActivitySkuStockCount(sku, activitySkuEntity.getStockCount());
+        //上面缓存的是sku，下面缓存的是活动以及活动数量
+        //下面使用的两个方法是AbstractRaffleActivity用来在创建订单方法中获取到活动对象以及活动次数
+        //这两个以及sku都是创建聚合对象的入参
+
+        // 预热活动【查询时预热到缓存】
+        activityRepository.queryRaffleActivityByActivityId(activitySkuEntity.getActivityId());
+
+        // 预热活动次数【查询时预热到缓存】
+        activityRepository.queryRaffleActivityCountByActivityCountId(activitySkuEntity.getActivityCountId());
+
+        return true;
+    }
+
+    //进行sku的预热
+    private void cacheActivitySkuStockCount(Long sku, Integer stockCount) {
+        String cacheKey = Constants.RedisKey.ACTIVITY_SKU_STOCK_COUNT_KEY + sku;
+        activityRepository.cacheActivitySkuStockCount(cacheKey, stockCount);
+    }
+
+    //进行redis库存的扣减，如果redis中的库存为小于等于0就发送mq
+    @Override
+    public boolean subtractionActivitySkuStock(Long sku, Date endDateTime) {
+        String cacheKey = Constants.RedisKey.ACTIVITY_SKU_STOCK_COUNT_KEY + sku;
+        return activityRepository.subtractionActivitySkuStock(sku, cacheKey, endDateTime);
+    }
+}
