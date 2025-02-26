@@ -1,18 +1,21 @@
 package com.ztf.domain.activity.model.aggregate;
 
-import com.ztf.domain.activity.model.entity.ActivityAccountEntity;
 import com.ztf.domain.activity.model.entity.ActivityOrderEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-//下单聚合对象
+/**
+ * @author Fuzhengwei bugstack.cn @小傅哥
+ * @description 账户额度下单聚合对象
+ * @create 2024-03-16 10:32
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOrderAggregate {
+public class CreateQuotaOrderAggregate {
 
     /**
      * 用户ID

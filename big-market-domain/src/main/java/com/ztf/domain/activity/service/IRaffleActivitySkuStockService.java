@@ -2,7 +2,8 @@ package com.ztf.domain.activity.service;
 
 import com.ztf.domain.activity.model.valobj.ActivitySkuStockKeyVO;
 
-public interface ISkuStock {
+//抽奖活动SKU库存服务
+public interface IRaffleActivitySkuStockService {
     /**
      * 获取活动sku库存消耗队列
      *

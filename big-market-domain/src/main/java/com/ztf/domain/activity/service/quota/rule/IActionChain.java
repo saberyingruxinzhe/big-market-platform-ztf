@@ -1,4 +1,4 @@
-package com.ztf.domain.activity.service.rule;
+package com.ztf.domain.activity.service.quota.rule;
 
 import com.ztf.domain.activity.model.entity.ActivityCountEntity;
 import com.ztf.domain.activity.model.entity.ActivityEntity;

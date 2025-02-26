@@ -1,10 +1,10 @@
-package com.ztf.domain.activity.service.rule.impl;
+package com.ztf.domain.activity.service.quota.rule.impl;
 
 import com.ztf.domain.activity.model.entity.ActivityCountEntity;
 import com.ztf.domain.activity.model.entity.ActivityEntity;
 import com.ztf.domain.activity.model.entity.ActivitySkuEntity;
 import com.ztf.domain.activity.model.valobj.ActivityStateVO;
-import com.ztf.domain.activity.service.rule.AbstractActionChain;
+import com.ztf.domain.activity.service.quota.rule.AbstractActionChain;
 import com.ztf.types.enums.ResponseCode;
 import com.ztf.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;

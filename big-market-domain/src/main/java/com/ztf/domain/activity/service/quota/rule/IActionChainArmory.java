@@ -1,4 +1,4 @@
-package com.ztf.domain.activity.service.rule;
+package com.ztf.domain.activity.service.quota.rule;
 
 public interface IActionChainArmory {
     IActionChain next();
