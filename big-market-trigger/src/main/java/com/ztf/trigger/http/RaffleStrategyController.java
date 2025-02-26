@@ -7,7 +7,7 @@ import com.ztf.domain.strategy.model.entity.StrategyAwardEntity;
 import com.ztf.domain.strategy.service.IRaffleAward;
 import com.ztf.domain.strategy.service.IRaffleStrategy;
 import com.ztf.domain.strategy.service.armory.IStrategyArmory;
-import com.ztf.trigger.api.IRaffleService;
+import com.ztf.trigger.api.IRaffleStrategyService;
 import com.ztf.trigger.api.dto.RaffleAwardListRequestDTO;
 import com.ztf.trigger.api.dto.RaffleAwardListResponseDTO;
 import com.ztf.trigger.api.dto.RaffleRequestDTO;
@@ -26,7 +26,7 @@ import java.util.List;
 @RestController()
 @CrossOrigin("${app.config.cross-origin}")
 @RequestMapping("/api/${app.config.api-version}/raffle/")
-public class RaffleController implements IRaffleService {
+public class RaffleStrategyController implements IRaffleStrategyService {
 
     @Resource
     private IRaffleAward raffleAward;

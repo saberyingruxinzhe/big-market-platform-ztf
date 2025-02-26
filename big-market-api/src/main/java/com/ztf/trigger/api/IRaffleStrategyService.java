@@ -8,7 +8,7 @@ import com.ztf.types.model.Response;
 
 import java.util.List;
 
-public interface IRaffleService {
+public interface IRaffleStrategyService {
     /**
      * 策略装配接口
      *
