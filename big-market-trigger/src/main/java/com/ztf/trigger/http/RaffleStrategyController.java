@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 @RestController()
 @CrossOrigin("${app.config.cross-origin}")
-@RequestMapping("/api/${app.config.api-version}/raffle/")
+@RequestMapping("/api/${app.config.api-version}/raffle/strategy/")
 public class RaffleStrategyController implements IRaffleStrategyService {
 
     @Resource
@@ -91,7 +91,7 @@ public class RaffleStrategyController implements IRaffleStrategyService {
                 throw new AppException(ResponseCode.ILLEGAL_PARAMETER.getCode(), ResponseCode.ILLEGAL_PARAMETER.getInfo());
             }
             //2. 查询奖品配置
-            List<StrategyAwardEntity> strategyAwardEntities = raffleAward.queryRaffleStrategyAwardList(request.getActivityId());
+            List<StrategyAwardEntity> strategyAwardEntities = raffleAward.queryRaffleStrategyAwardListByActivityId(request.getActivityId());
             //3.获取规则配置【因为StrategyAwardEntity新添加了ruleModels属性，所以可以这么处理】
             /**
              * 这里获取到的treeIds是什么
