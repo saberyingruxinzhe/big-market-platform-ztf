@@ -8,6 +8,7 @@ import com.ztf.domain.strategy.model.valobj.RuleTreeVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardStockKeyVO;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,15 @@ public interface IStrategyRepository {
     //decr方式扣减库存,注意这里扣减的是redis中缓存的库存
     Boolean subtractionAwardStock(String cacheKey);
 
+    /**
+     * 缓存key，decr 方式扣减库存
+     *
+     * @param cacheKey 缓存Key
+     * @param endDateTime 活动结束时间
+     * @return 扣减结果
+     */
+    Boolean subtractionAwardStock(String cacheKey, Date endDateTime);
+
 
     //写入奖品库存消费队列
     void awardStockConsumeSendQueue(StrategyAwardStockKeyVO strategyAwardStockKeyVO);
@@ -57,6 +67,12 @@ public interface IStrategyRepository {
     //根据策略id + 奖品id的唯一值组合获取到奖品信息
     StrategyAwardEntity queryStrategyAwardEntity(Long strategyId, Integer awardId);
 
+    /**
+     * 查询策略ID
+     *
+     * @param activityId 活动ID
+     * @return 策略ID
+     */
     Long queryStrategyIdByActivityId(Long activityId);
 
     /**
@@ -67,4 +83,6 @@ public interface IStrategyRepository {
      * @return 用户今日参与次数
      */
     Integer queryTodayUserRaffleCount(String userId, Long strategyId);
+
+    Map<String, Integer> queryAwardRuleLockCount(String[] treeIds);
 }

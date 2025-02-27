@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @Slf4j
 @Component("rule_lock")
@@ -19,7 +20,7 @@ public class RuleLockLogicTreeNode implements ILogicTreeNode {
     //这里的入参上一节中没有ruleValue，这里为什么加上一个ruleValue
     //因为这里真正需要做规则判断，这里传入的ruleValue就是需要抽奖多少次解锁的次数
     @Override
-    public DefaultTreeFactory.TreeActionEntity logic(String userId, Long strategyId, Integer awardId, String ruleValue) {
+    public DefaultTreeFactory.TreeActionEntity logic(String userId, Long strategyId, Integer awardId, String ruleValue, Date endDateTime) {
         log.info("规则过滤-次数锁 userId:{} strategyId:{} awardId:{}", userId, strategyId, awardId);
 
         long raffleCount = 0L;

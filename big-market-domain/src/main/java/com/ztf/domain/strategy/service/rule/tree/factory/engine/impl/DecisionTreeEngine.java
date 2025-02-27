@@ -9,6 +9,7 @@ import com.ztf.domain.strategy.service.rule.tree.factory.DefaultTreeFactory;
 import com.ztf.domain.strategy.service.rule.tree.factory.engine.IDecisionTreeEngine;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class DecisionTreeEngine implements IDecisionTreeEngine {
      */
 
     @Override
-    public DefaultTreeFactory.StrategyAwardVO process(String userId, Long strategyId, Integer awardId) {
+    public DefaultTreeFactory.StrategyAwardVO process(String userId, Long strategyId, Integer awardId, Date endDateTime) {
         DefaultTreeFactory.StrategyAwardVO strategyAwardVO = null;
 
         //获取基础信息
@@ -52,7 +53,7 @@ public class DecisionTreeEngine implements IDecisionTreeEngine {
 
             //决策节点计算,即执行树节点的logic方法完成过滤
             //获取到RuleLogicCheckTypeVO的目的是为了判断之后要往那个方向的树节点去
-            DefaultTreeFactory.TreeActionEntity logicEntity = logicTreeNode.logic(userId, strategyId, awardId, ruleValue);
+            DefaultTreeFactory.TreeActionEntity logicEntity = logicTreeNode.logic(userId, strategyId, awardId, ruleValue, endDateTime);
             RuleLogicCheckTypeVO ruleLogicCheckTypeVO = logicEntity.getRuleLogicCheckType();
             //奖品对象也在一轮一轮刷新
             strategyAwardVO = logicEntity.getStrategyAwardVO();
