@@ -6,6 +6,7 @@ import com.ztf.domain.activity.model.entity.*;
 import com.ztf.domain.activity.model.valobj.ActivitySkuStockKeyVO;
 
 import java.util.Date;
+import java.util.List;
 
 public interface IActivityRepository {
     ActivitySkuEntity queryActivitySku(Long sku);
@@ -40,5 +41,7 @@ public interface IActivityRepository {
 
     void saveCreatePartakeOrderAggregate(CreatePartakeOrderAggregate createPartakeOrderAggregate);
 
+    List<ActivitySkuEntity> queryActivitySkuListByActivityId(Long activityId);
 
+    Integer queryRaffleActivityAccountDayPartakeCount(Long activityId, String userId);
 }

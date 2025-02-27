@@ -7,7 +7,7 @@
 #
 # 主机: 127.0.0.1 (MySQL 5.6.39)
 # 数据库: big_market
-# 生成时间: 2024-03-09 06:36:47 +0000
+# 生成时间: 2024-04-13 07:28:08 +0000
 # ************************************************************
 
 
@@ -70,15 +70,13 @@ CREATE TABLE `raffle_activity` (
   `activity_desc` varchar(128) NOT NULL COMMENT '活动描述',
   `begin_date_time` datetime NOT NULL COMMENT '开始时间',
   `end_date_time` datetime NOT NULL COMMENT '结束时间',
-  `stock_count` int(11) NOT NULL COMMENT '库存总量',
-  `stock_count_surplus` int(11) NOT NULL COMMENT '剩余库存',
-  `activity_count_id` bigint(12) NOT NULL COMMENT '活动参与次数配置',
   `strategy_id` bigint(8) NOT NULL COMMENT '抽奖策略ID',
-  `state` varchar(8) NOT NULL COMMENT '活动状态',
+  `state` varchar(8) NOT NULL DEFAULT 'create' COMMENT '活动状态',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uq_activity_id` (`activity_id`),
+  UNIQUE KEY `uq_strategy_id` (`strategy_id`),
   KEY `idx_begin_date_time` (`begin_date_time`),
   KEY `idx_end_date_time` (`end_date_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='抽奖活动表';
@@ -86,9 +84,9 @@ CREATE TABLE `raffle_activity` (
 LOCK TABLES `raffle_activity` WRITE;
 /*!40000 ALTER TABLE `raffle_activity` DISABLE KEYS */;
 
-INSERT INTO `raffle_activity` (`id`, `activity_id`, `activity_name`, `activity_desc`, `begin_date_time`, `end_date_time`, `stock_count`, `stock_count_surplus`, `activity_count_id`, `strategy_id`, `state`, `create_time`, `update_time`)
+INSERT INTO `raffle_activity` (`id`, `activity_id`, `activity_name`, `activity_desc`, `begin_date_time`, `end_date_time`, `strategy_id`, `state`, `create_time`, `update_time`)
 VALUES
-	(1,100301,'测试活动','测试活动','2024-03-09 10:15:10','2034-03-09 10:15:10',1000,1000,1,100006,'0','2024-03-09 10:15:10','2024-03-09 10:15:17');
+	(1,100301,'测试活动','测试活动','2024-03-09 10:15:10','2034-03-09 10:15:10',100006,'open','2024-03-09 10:15:10','2024-03-30 12:07:36');
 
 /*!40000 ALTER TABLE `raffle_activity` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -116,9 +114,39 @@ LOCK TABLES `raffle_activity_count` WRITE;
 
 INSERT INTO `raffle_activity_count` (`id`, `activity_count_id`, `total_count`, `day_count`, `month_count`, `create_time`, `update_time`)
 VALUES
-	(1,1,100,2,60,'2024-03-09 10:15:42','2024-03-09 10:15:42');
+	(1,11101,1,1,1,'2024-03-09 10:15:42','2024-03-16 12:30:54');
 
 /*!40000 ALTER TABLE `raffle_activity_count` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# 转储表 raffle_activity_sku
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `raffle_activity_sku`;
+
+CREATE TABLE `raffle_activity_sku` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `sku` bigint(12) NOT NULL COMMENT '商品sku - 把每一个组合当做一个商品',
+  `activity_id` bigint(12) NOT NULL COMMENT '活动ID',
+  `activity_count_id` bigint(12) NOT NULL COMMENT '活动个人参与次数ID',
+  `stock_count` int(11) NOT NULL COMMENT '商品库存',
+  `stock_count_surplus` int(11) NOT NULL COMMENT '剩余库存',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_sku` (`sku`),
+  KEY `idx_activity_id_activity_count_id` (`activity_id`,`activity_count_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+LOCK TABLES `raffle_activity_sku` WRITE;
+/*!40000 ALTER TABLE `raffle_activity_sku` DISABLE KEYS */;
+
+INSERT INTO `raffle_activity_sku` (`id`, `sku`, `activity_id`, `activity_count_id`, `stock_count`, `stock_count_surplus`, `create_time`, `update_time`)
+VALUES
+	(1,9011,100301,11101,20,19,'2024-03-16 11:41:09','2024-04-05 15:57:50');
+
+/*!40000 ALTER TABLE `raffle_activity_sku` ENABLE KEYS */;
 UNLOCK TABLES;
 
 
@@ -242,7 +270,7 @@ LOCK TABLES `strategy` WRITE;
 INSERT INTO `strategy` (`id`, `strategy_id`, `strategy_desc`, `rule_models`, `create_time`, `update_time`)
 VALUES
 	(1,100001,'抽奖策略','rule_blacklist,rule_weight','2023-12-09 09:37:19','2024-01-20 11:39:23'),
-	(2,100003,'抽奖策略-验证lock','rule_blacklist','2024-01-13 10:34:06','2024-01-20 15:03:19'),
+	(2,100003,'抽奖策略-验证lock',NULL,'2024-01-13 10:34:06','2024-04-03 16:03:21'),
 	(3,100002,'抽奖策略-非完整1概率',NULL,'2023-12-09 09:37:19','2024-02-03 10:14:17'),
 	(4,100004,'抽奖策略-随机抽奖',NULL,'2023-12-09 09:37:19','2024-01-20 19:21:03'),
 	(5,100005,'抽奖策略-测试概率计算',NULL,'2023-12-09 09:37:19','2024-01-21 21:54:58'),
@@ -300,14 +328,14 @@ VALUES
 	(19,100005,103,'随机积分',NULL,80000,80000,0.0300,'tree_luck_award',1,'2023-12-09 09:38:31','2024-02-15 07:42:50'),
 	(20,100005,104,'随机积分',NULL,80000,80000,0.0300,'tree_luck_award',1,'2023-12-09 09:38:31','2024-02-15 07:42:51'),
 	(21,100005,105,'随机积分',NULL,80000,80000,0.0010,'tree_luck_award',1,'2023-12-09 09:38:31','2024-02-15 07:42:52'),
-	(22,100006,101,'随机积分',NULL,100,64,0.0200,'tree_luck_award',1,'2023-12-09 09:38:31','2024-02-29 08:06:30'),
-	(23,100006,102,'7等奖',NULL,100,28,0.0300,'tree_luck_award',2,'2023-12-09 09:38:31','2024-02-25 21:52:35'),
-	(24,100006,103,'6等奖',NULL,100,48,0.0300,'tree_luck_award',3,'2023-12-09 09:38:31','2024-02-15 15:38:15'),
-	(25,100006,104,'5等奖',NULL,100,45,0.0300,'tree_luck_award',4,'2023-12-09 09:38:31','2024-02-15 15:38:35'),
-	(26,100006,105,'4等奖',NULL,100,41,0.0300,'tree_luck_award',5,'2023-12-09 09:38:31','2024-02-16 08:46:00'),
-	(27,100006,106,'3等奖','抽奖1次后解锁',100,31,0.0300,'tree_lock_1',6,'2023-12-09 09:38:31','2024-02-29 08:06:25'),
-	(28,100006,107,'2等奖','抽奖1次后解锁',100,29,0.0300,'tree_lock_1',7,'2023-12-09 09:38:31','2024-02-29 08:06:20'),
-	(29,100006,108,'1等奖','抽奖2次后解锁',100,35,0.0300,'tree_lock_2',8,'2023-12-09 09:38:31','2024-02-29 08:06:35');
+	(22,100006,101,'随机积分',NULL,100,62,0.0200,'tree_luck_award',1,'2023-12-09 09:38:31','2024-04-13 15:25:21'),
+	(23,100006,102,'7等奖',NULL,100,21,0.0300,'tree_luck_award',2,'2023-12-09 09:38:31','2024-04-13 15:25:18'),
+	(24,100006,103,'6等奖',NULL,100,44,0.0300,'tree_luck_award',3,'2023-12-09 09:38:31','2024-04-13 12:18:32'),
+	(25,100006,104,'5等奖',NULL,100,39,0.0300,'tree_luck_award',4,'2023-12-09 09:38:31','2024-04-13 15:25:10'),
+	(26,100006,105,'4等奖',NULL,100,39,0.0300,'tree_luck_award',5,'2023-12-09 09:38:31','2024-04-13 12:20:30'),
+	(27,100006,106,'3等奖','抽奖1次后解锁',100,28,0.0300,'tree_lock_1',6,'2023-12-09 09:38:31','2024-04-13 12:20:40'),
+	(28,100006,107,'2等奖','抽奖1次后解锁',100,26,0.0300,'tree_lock_1',7,'2023-12-09 09:38:31','2024-04-13 15:25:25'),
+	(29,100006,108,'1等奖','抽奖2次后解锁',100,34,0.0300,'tree_lock_2',8,'2023-12-09 09:38:31','2024-04-13 11:42:40');
 
 /*!40000 ALTER TABLE `strategy_award` ENABLE KEYS */;
 UNLOCK TABLES;

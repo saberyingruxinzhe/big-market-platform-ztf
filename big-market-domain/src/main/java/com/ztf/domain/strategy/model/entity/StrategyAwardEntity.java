@@ -37,4 +37,7 @@ public class StrategyAwardEntity {
     //排序，用来确定在抽奖圆盘或者九宫格中的位置
     private Integer sort;
 
+    /** 规则模型，rule配置的模型同步到此表，便于使用 */
+    private String ruleModels;
+
 }
