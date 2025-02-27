@@ -14,7 +14,11 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/**
+ * @author Fuzhengwei bugstack.cn @小傅哥
+ * @description 规则树测试
+ * @create 2024-01-27 13:23
+ */
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -25,7 +29,7 @@ public class LogicTreeTest {
 
     /**
      * rule_lock --左--> rule_luck_award
-     * --右--> rule_stock --右--> rule_luck_award
+     *           --右--> rule_stock --右--> rule_luck_award
      */
     @Test
     public void test_tree_rule() {
@@ -92,7 +96,7 @@ public class LogicTreeTest {
 
         IDecisionTreeEngine treeEngine = defaultTreeFactory.openLogicTree(ruleTreeVO);
 
-        DefaultTreeFactory.StrategyAwardVO data = treeEngine.process("xiaofuge", 100001L, 100);
+        DefaultTreeFactory.StrategyAwardVO data = treeEngine.process("xiaofuge", 100001L, 100, null);
         log.info("测试结果：{}", JSON.toJSONString(data));
 
     }

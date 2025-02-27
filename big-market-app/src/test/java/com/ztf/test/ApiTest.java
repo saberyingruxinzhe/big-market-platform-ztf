@@ -1,39 +1,36 @@
 package com.ztf.test;
 
+import com.ztf.trigger.api.dto.RaffleAwardListRequestDTO;
 import com.alibaba.fastjson2.JSON;
-import com.ztf.infrastructure.persistent.dao.IRaffleActivityDao;
-import com.ztf.infrastructure.persistent.dao.IStrategyAwardDao;
-import com.ztf.infrastructure.persistent.po.RaffleActivity;
-import com.ztf.infrastructure.persistent.po.StrategyAward;
-import com.ztf.infrastructure.persistent.redis.IRedisService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.redisson.api.RMap;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-
+/**
+ * @author Fuzhengwei bugstack.cn @小傅哥
+ * @description 功能测试
+ * @create 2023-12-23 11:39
+ */
 @Slf4j
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 public class ApiTest {
-
-    @Resource
-    private IRedisService redisService;
-    @Resource
-    private IStrategyAwardDao strategyAwardDao;
 
     @Test
     public void test() {
-        StrategyAward strategyAwardReq = new StrategyAward();
+        RaffleAwardListRequestDTO requestDTO = new RaffleAwardListRequestDTO();
+        requestDTO.setUserId("xiaofuge");
+        requestDTO.setActivityId(100301L);
+        log.info(JSON.toJSONString(requestDTO));
+    }
 
-        strategyAwardReq.setAwardId(104);
-        strategyAwardReq.setStrategyId(100006L);
-        StrategyAward strategyAwardRes = strategyAwardDao.queryStrategyAward(strategyAwardReq);
-        log.info("测试结果：{}", JSON.toJSONString(strategyAwardRes));
-
+    private double convert(double min){
+        double current = min;
+        double max = 1;
+        while (current < 1){
+            current = current * 10;
+            max = max * 10;
+        }
+        return max;
     }
 
 }

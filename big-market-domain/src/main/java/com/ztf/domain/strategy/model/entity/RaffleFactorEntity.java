@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 //抽奖因子实体类，用来存放抽奖最初需要的信息
 @Data
 @Builder
@@ -16,6 +18,10 @@ public class RaffleFactorEntity {
     private String userId;
     //策略id
     private Long strategyId;
+    /** 结束时间
+     * 方便redis设置过期时间
+     * */
+    private Date endDateTime;
 
     /**
      * 作为执行performRaffle的入参，不可能一开始就知道奖品id，所以这个属性去掉

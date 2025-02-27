@@ -1,5 +1,7 @@
 package com.ztf.domain.strategy.service.armory;
 
+import java.util.Date;
+
 //这个接口用来实际生成随机数抽奖
 public interface IStrategyDispatch {
     Integer getRandomAwardId(Long strategyId);
@@ -10,6 +12,6 @@ public interface IStrategyDispatch {
     Integer getRandomAwardId(String key);
 
     //根据策略id和奖品id确扣减奖品缓存库存
-    Boolean subtractionAwardStock(Long strategyId, Integer awardId);
+    Boolean subtractionAwardStock(Long strategyId, Integer awardId, Date endDateTime);
 
 }

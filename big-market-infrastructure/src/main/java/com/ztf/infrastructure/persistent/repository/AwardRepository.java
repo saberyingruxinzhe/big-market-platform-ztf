@@ -105,6 +105,7 @@ public class AwardRepository implements IAwardRepository {
         //这样如果有MQ消息发送失败则会有task的状态不是completed
 
         //这里发送的MQ消息是什么作用？
+        //还为处理监听到这些MQ的用处是什么，应该是后续发奖之类的
         //todo
         try {
             // 发送消息【在事务外执行，如果失败还有任务补偿】
