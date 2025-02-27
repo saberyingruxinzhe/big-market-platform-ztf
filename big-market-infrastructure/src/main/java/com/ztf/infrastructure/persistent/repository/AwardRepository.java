@@ -9,8 +9,10 @@ import com.ztf.domain.award.repository.IAwardRepository;
 import com.ztf.infrastructure.event.EventPublisher;
 import com.ztf.infrastructure.persistent.dao.ITaskDao;
 import com.ztf.infrastructure.persistent.dao.IUserAwardRecordDao;
+import com.ztf.infrastructure.persistent.dao.IUserRaffleOrderDao;
 import com.ztf.infrastructure.persistent.po.Task;
 import com.ztf.infrastructure.persistent.po.UserAwardRecord;
+import com.ztf.infrastructure.persistent.po.UserRaffleOrder;
 import com.ztf.types.enums.ResponseCode;
 import com.ztf.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,8 @@ public class AwardRepository implements IAwardRepository {
     private TransactionTemplate transactionTemplate;
     @Resource
     private EventPublisher eventPublisher;
+    @Resource
+    private IUserRaffleOrderDao userRaffleOrderDao;
 
     @Override
     public void saveUserAwardRecord(UserAwardRecordAggregate userAwardRecordAggregate) {
@@ -60,6 +64,12 @@ public class AwardRepository implements IAwardRepository {
         task.setMessage(JSON.toJSONString(taskEntity.getMessage()));
         task.setState(taskEntity.getState().getCode());
 
+        //构建用来更新的抽奖单，就是在抽奖获得奖品之后，需要将之前创建的那个抽奖订单更新一下
+        //需要将状态由create更新为used，防止后面还可以找到这个已经用过的订单
+        UserRaffleOrder userRaffleOrderReq = new UserRaffleOrder();
+        userRaffleOrderReq.setUserId(userAwardRecordEntity.getUserId());
+        userRaffleOrderReq.setOrderId(userAwardRecordEntity.getOrderId());
+
         //第一个事务是用来处理提交抽奖奖品记录以及写入task表格中的
         //注意这里写入的task状态为create
         try {
@@ -70,6 +80,14 @@ public class AwardRepository implements IAwardRepository {
                     userAwardRecordDao.insert(userAwardRecord);
                     //写入任务
                     taskDao.insert(task);
+                    // 更新抽奖单
+                    int count = userRaffleOrderDao.updateUserRaffleOrderStateUsed(userRaffleOrderReq);
+                    //count不为1代表更新失败，所以这个抽奖单的状态不是create，所以不能使用这个抽奖单
+                    if (1 != count) {
+                        status.setRollbackOnly();
+                        log.error("写入中奖记录，用户抽奖单已使用过，不可重复抽奖 userId: {} activityId: {} awardId: {}", userId, activityId, awardId);
+                        throw new AppException(ResponseCode.ACTIVITY_ORDER_ERROR.getCode(), ResponseCode.ACTIVITY_ORDER_ERROR.getInfo());
+                    }
                     return 1;
                 } catch (DuplicateKeyException e) {
                     status.setRollbackOnly();
