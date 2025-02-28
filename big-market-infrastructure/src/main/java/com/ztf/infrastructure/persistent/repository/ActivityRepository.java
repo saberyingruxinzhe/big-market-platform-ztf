@@ -138,7 +138,7 @@ public class ActivityRepository implements IActivityRepository {
             raffleActivityOrder.setState(activityOrderEntity.getState().getCode());
             raffleActivityOrder.setOutBusinessNo(activityOrderEntity.getOutBusinessNo());
 
-            //创建账户对象
+            //创建账户对象 - 总
             //原本在聚合对象中有一个活动账户的实体类，但是如果保留那个实体类就相当于需要构建对象两次
             RaffleActivityAccount raffleActivityAccount = new RaffleActivityAccount();
             raffleActivityAccount.setUserId(createQuotaOrderAggregate.getUserId());
@@ -150,11 +150,29 @@ public class ActivityRepository implements IActivityRepository {
             raffleActivityAccount.setMonthCount(createQuotaOrderAggregate.getMonthCount());
             raffleActivityAccount.setMonthCountSurplus(createQuotaOrderAggregate.getMonthCount());
 
+            // 账户对象 - 月
+            RaffleActivityAccountMonth raffleActivityAccountMonth = new RaffleActivityAccountMonth();
+            raffleActivityAccountMonth.setUserId(createQuotaOrderAggregate.getUserId());
+            raffleActivityAccountMonth.setActivityId(createQuotaOrderAggregate.getActivityId());
+            raffleActivityAccountMonth.setMonth(raffleActivityAccountMonth.currentMonth());
+            raffleActivityAccountMonth.setMonthCount(createQuotaOrderAggregate.getMonthCount());
+            raffleActivityAccountMonth.setMonthCountSurplus(createQuotaOrderAggregate.getMonthCount());
+
+            // 账户对象 - 日
+            RaffleActivityAccountDay raffleActivityAccountDay = new RaffleActivityAccountDay();
+            raffleActivityAccountDay.setUserId(createQuotaOrderAggregate.getUserId());
+            raffleActivityAccountDay.setActivityId(createQuotaOrderAggregate.getActivityId());
+            raffleActivityAccountDay.setDay(raffleActivityAccountDay.currentDay());
+            raffleActivityAccountDay.setDayCount(createQuotaOrderAggregate.getDayCount());
+            raffleActivityAccountDay.setDayCountSurplus(createQuotaOrderAggregate.getDayCount());
+
             // 以用户ID作为切分键，通过 doRouter 设定路由【这样就保证了下面的操作，都是同一个链接下，也就保证了事务的特性】
             dbRouter.doRouter(createQuotaOrderAggregate.getUserId());
             // 编程式事务
             /**
              * 领域内保证事务的一致性，领域外保证最终的一致性
+             * 在第32节之前，这里只更新了总的账户额度，并没有针对月账户以及日账户进行更新
+             * 所以这里添加对于月、日账户的更新
              */
             transactionTemplate.execute(status -> {
                 try {
@@ -166,6 +184,14 @@ public class ActivityRepository implements IActivityRepository {
                     if (0 == count) {
                         raffleActivityAccountDao.insert(raffleActivityAccount);
                     }
+                    // 4. 更新账户 - 月
+                    raffleActivityAccountMonthDao.addAccountQuota(raffleActivityAccountMonth);
+                    // 5. 更新账户 - 日
+                    raffleActivityAccountDayDao.addAccountQuota(raffleActivityAccountDay);
+                    //为什么对于上面总账户会进行判断是否存在，
+                    //todo
+                    //这两个方法的更新思路为在表中找到对应用户id、活动id、以及对应天的日、月账户对象
+                    //对其进行添加相应的sku中的获取到的额度
                     return 1;
                 } catch (DuplicateKeyException e) {
                     /**
