@@ -101,4 +101,9 @@ public class RaffleActivityPartakeService extends AbstractRaffleActivityPartake{
         userRaffleOrder.setEndDateTime(activityEntity.getEndDateTime());
         return userRaffleOrder;
     }
+
+    @Override
+    public ActivityAccountEntity queryActivityAccountEntity(Long activityId, String userId) {
+        return activityRepository.queryActivityAccountEntity(activityId, userId);
+    }
 }

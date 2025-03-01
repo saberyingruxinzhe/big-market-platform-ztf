@@ -1,6 +1,7 @@
 package com.ztf.domain.rebate.repository;
 
 import com.ztf.domain.rebate.model.aggregate.BehaviorRebateAggregate;
+import com.ztf.domain.rebate.model.entity.BehaviorRebateOrderEntity;
 import com.ztf.domain.rebate.model.valobj.BehaviorTypeVO;
 import com.ztf.domain.rebate.model.valobj.DailyBehaviorRebateVO;
 
@@ -17,4 +18,5 @@ public interface IBehaviorRebateRepository {
 
     void saveUserRebateRecord(String userId, List<BehaviorRebateAggregate> behaviorRebateAggregates);
 
+    List<BehaviorRebateOrderEntity> queryOrderByOutBusinessNo(String userId, String outBusinessNo);
 }

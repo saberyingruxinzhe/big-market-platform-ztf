@@ -1,5 +1,6 @@
 package com.ztf.domain.activity.service;
 
+import com.ztf.domain.activity.model.entity.ActivityAccountEntity;
 import com.ztf.domain.activity.model.entity.PartakeRaffleActivityEntity;
 import com.ztf.domain.activity.model.entity.UserRaffleOrderEntity;
 
@@ -23,4 +24,5 @@ public interface IRaffleActivityPartakeService {
      */
     UserRaffleOrderEntity createOrder(PartakeRaffleActivityEntity partakeRaffleActivityEntity);
 
+    ActivityAccountEntity queryActivityAccountEntity(Long activityId, String userId);
 }
