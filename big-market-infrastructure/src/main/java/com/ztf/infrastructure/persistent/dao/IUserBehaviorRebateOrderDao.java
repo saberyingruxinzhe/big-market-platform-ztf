@@ -1,8 +1,11 @@
 package com.ztf.infrastructure.persistent.dao;
 
+import cn.bugstack.middleware.db.router.annotation.DBRouter;
 import com.ztf.infrastructure.persistent.po.UserBehaviorRebateOrder;
 import cn.bugstack.middleware.db.router.annotation.DBRouterStrategy;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @author Fuzhengwei bugstack.cn @小傅哥
@@ -14,5 +17,8 @@ import org.apache.ibatis.annotations.Mapper;
 public interface IUserBehaviorRebateOrderDao {
 
     void insert(UserBehaviorRebateOrder userBehaviorRebateOrder);
+
+    @DBRouter
+    List<UserBehaviorRebateOrder> queryOrderByOutBusinessNo(UserBehaviorRebateOrder userBehaviorRebateOrderReq);
 
 }

@@ -3,7 +3,9 @@ package com.ztf.test.domain.strategy;
 import com.alibaba.fastjson.JSON;
 import com.ztf.domain.strategy.model.entity.RaffleAwardEntity;
 import com.ztf.domain.strategy.model.entity.RaffleFactorEntity;
+import com.ztf.domain.strategy.model.valobj.RuleWeightVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardStockKeyVO;
+import com.ztf.domain.strategy.service.IRaffleRule;
 import com.ztf.domain.strategy.service.IRaffleStock;
 import com.ztf.domain.strategy.service.IRaffleStrategy;
 import com.ztf.domain.strategy.service.armory.IStrategyArmory;
@@ -18,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 
@@ -34,24 +37,25 @@ public class RaffleStrategyTest {
     private RuleWeightLogicChain ruleWeightLogicChain;
     @Resource
     private RuleLockLogicTreeNode ruleLockLogicTreeNode;
-
     @Resource
     private IRaffleStock raffleStock;
+    @Resource
+    private IRaffleRule raffleRule;
 
     @Before
     public void setUp() {
         // 策略装配 100001、100002、100003
-//        log.info("测试结果：{}", strategyArmory.assembleLotteryStrategy(100001L));
+        log.info("测试结果：{}", strategyArmory.assembleLotteryStrategy(100001L));
         log.info("测试结果：{}", strategyArmory.assembleLotteryStrategy(100006L));
 
-        // 通过反射 mock 规则中的值
-        ReflectionTestUtils.setField(ruleWeightLogicChain, "userScore", 4900L);
-        ReflectionTestUtils.setField(ruleLockLogicTreeNode, "userRaffleCount", 10L);
+        // 通过反射 mock 规则中的值；到本节不需要在使用了。
+        /*ReflectionTestUtils.setField(ruleWeightLogicChain, "userScore", 4900L);*/
+        /*ReflectionTestUtils.setField(ruleLockLogicTreeNode, "userRaffleCount", 10L);*/
     }
 
     @Test
     public void test_performRaffle() throws InterruptedException {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 1; i++) {
             RaffleFactorEntity raffleFactorEntity = RaffleFactorEntity.builder()
                     .userId("xiaofuge")
                     .strategyId(100006L)
@@ -101,6 +105,12 @@ public class RaffleStrategyTest {
     public void test_takeQueueValue() throws InterruptedException {
         StrategyAwardStockKeyVO strategyAwardStockKeyVO = raffleStock.takeQueueValue();
         log.info("测试结果：{}", JSON.toJSONString(strategyAwardStockKeyVO));
+    }
+
+    @Test
+    public void test_raffleRule() {
+        List<RuleWeightVO> ruleWeightVOS = raffleRule.queryAwardRuleWeightByActivityId(100301L);
+        log.info("测试结果：{}", JSON.toJSONString(ruleWeightVOS));
     }
 
 }

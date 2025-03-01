@@ -5,6 +5,7 @@ import com.ztf.domain.strategy.model.entity.StrategyAwardEntity;
 import com.ztf.domain.strategy.model.entity.StrategyEntity;
 import com.ztf.domain.strategy.model.entity.StrategyRuleEntity;
 import com.ztf.domain.strategy.model.valobj.RuleTreeVO;
+import com.ztf.domain.strategy.model.valobj.RuleWeightVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardStockKeyVO;
 
@@ -85,4 +86,26 @@ public interface IStrategyRepository {
     Integer queryTodayUserRaffleCount(String userId, Long strategyId);
 
     Map<String, Integer> queryAwardRuleLockCount(String[] treeIds);
+
+
+    /**
+     * 根据用户ID、策略ID，查询用户活动账户总使用量
+     * 方便再过滤节点中使用积分消耗总量来判断应该对应那一段临界值
+     * 比如消耗了2500积分，超过2000但是不到4500，所以就选择2000那个临界值
+     *
+     * @param userId     用户ID
+     * @param strategyId 策略ID
+     * @return 使用总量
+     */
+    Integer queryActivityAccountTotalUseCount(String userId, Long strategyId);
+
+    /**
+     * 查询奖品权重配置
+     * 返回的奖品权重配置是给前端用的，后端已经有方法处理过了
+     * 这里是配置前端页面使用的，使得用户可以看到自己还差多少积分到下一个权重
+     * 以及当前的权重中自己可以抽到哪些奖品
+     * @param strategyId 策略ID
+     * @return 权重规则
+     */
+    List<RuleWeightVO> queryAwardRuleWeight(Long strategyId);
 }
