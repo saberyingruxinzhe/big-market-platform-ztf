@@ -154,7 +154,7 @@ public class ActivityRepository implements IActivityRepository {
             RaffleActivityAccountMonth raffleActivityAccountMonth = new RaffleActivityAccountMonth();
             raffleActivityAccountMonth.setUserId(createQuotaOrderAggregate.getUserId());
             raffleActivityAccountMonth.setActivityId(createQuotaOrderAggregate.getActivityId());
-            raffleActivityAccountMonth.setMonth(raffleActivityAccountMonth.currentMonth());
+            raffleActivityAccountMonth.setMonth(RaffleActivityAccountMonth.currentMonth());
             raffleActivityAccountMonth.setMonthCount(createQuotaOrderAggregate.getMonthCount());
             raffleActivityAccountMonth.setMonthCountSurplus(createQuotaOrderAggregate.getMonthCount());
 
@@ -162,7 +162,7 @@ public class ActivityRepository implements IActivityRepository {
             RaffleActivityAccountDay raffleActivityAccountDay = new RaffleActivityAccountDay();
             raffleActivityAccountDay.setUserId(createQuotaOrderAggregate.getUserId());
             raffleActivityAccountDay.setActivityId(createQuotaOrderAggregate.getActivityId());
-            raffleActivityAccountDay.setDay(raffleActivityAccountDay.currentDay());
+            raffleActivityAccountDay.setDay(RaffleActivityAccountDay.currentDay());
             raffleActivityAccountDay.setDayCount(createQuotaOrderAggregate.getDayCount());
             raffleActivityAccountDay.setDayCountSurplus(createQuotaOrderAggregate.getDayCount());
 
