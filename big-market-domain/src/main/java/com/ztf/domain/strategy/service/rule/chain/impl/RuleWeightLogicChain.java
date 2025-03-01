@@ -23,9 +23,8 @@ public class RuleWeightLogicChain extends AbstractLogicChain {
     @Resource
     private IStrategyDispatch strategyDispatch;
 
-    //这里先设定用户的积分为固定值，后期要到数据库中查询
-    public Long userScore = 4500L;
-    @Autowired
+
+    @Resource
     private StrategyArmoryDispatch strategyArmoryDispatch;
 
 
@@ -48,11 +47,14 @@ public class RuleWeightLogicChain extends AbstractLogicChain {
         Collections.sort(analyticalSortedKeys);
 
         //3。开始逐个对比哪一个权重合适
+        Integer userScore = repository.queryActivityAccountTotalUseCount(userId, strategyId);
         Long nextValue = analyticalSortedKeys.stream()
-                .filter(key -> userScore >= key)
+                .sorted(Comparator.reverseOrder())
+                .filter(analyticalSortedKeyValue -> userScore >= analyticalSortedKeyValue)
                 .findFirst()
                 .orElse(null);
 
+        //4. 权重抽奖
         if(null != nextValue) {
             //拦截
             //这里就直接计算出来抽到的奖品了，不用走默认的抽奖责任链节点了，
@@ -67,6 +69,8 @@ public class RuleWeightLogicChain extends AbstractLogicChain {
         }
 
         //这里放行是因为用户积分还未达到拦截的标准
+        // 5. 过滤其他责任链
+        log.info("抽奖责任链-权重放行 userId: {} strategyId: {} ruleModel: {}", userId, strategyId, ruleModel());
         return next().logic(userId, strategyId);
     }
 

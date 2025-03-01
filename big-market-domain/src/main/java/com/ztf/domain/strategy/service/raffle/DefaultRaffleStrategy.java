@@ -2,6 +2,7 @@ package com.ztf.domain.strategy.service.raffle;
 
 import com.ztf.domain.strategy.model.entity.StrategyAwardEntity;
 import com.ztf.domain.strategy.model.valobj.RuleTreeVO;
+import com.ztf.domain.strategy.model.valobj.RuleWeightVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardRuleModelVO;
 import com.ztf.domain.strategy.model.valobj.StrategyAwardStockKeyVO;
 import com.ztf.domain.strategy.repository.IStrategyRepository;
@@ -84,36 +85,16 @@ public class DefaultRaffleStrategy extends AbstractRaffleStrategy implements IRa
 
     }
 
+    @Override
+    public List<RuleWeightVO> queryAwardRuleWeight(Long strategyId) {
+        return repository.queryAwardRuleWeight(strategyId);
+    }
 
-    //已经不需要前置过滤的方法了，这里的逻辑都由责任链表实现了
+    @Override
+    public List<RuleWeightVO> queryAwardRuleWeightByActivityId(Long activityId) {
+        Long strategyId = repository.queryStrategyIdByActivityId(activityId);
+        return queryAwardRuleWeight(strategyId);
+    }
 
-//    @Override
-//    protected RuleActionEntity<RuleActionEntity.RaffleCenterEntity> doCheckRaffleCenterLogic(RaffleFactorEntity raffleFactorEntity, String... logics) {
-//        if(logics == null || logics.length == 0){
-//            return RuleActionEntity.<RuleActionEntity.RaffleCenterEntity>builder()
-//                    .code(RuleLogicCheckTypeVO.ALLOW.getCode())
-//                    .info(RuleLogicCheckTypeVO.ALLOW.getInfo())
-//                    .build();
-//        }
-//
-//        Map<String, ILogicFilter<RuleActionEntity.RaffleCenterEntity>> logicFilterGroup = logicFactory.openLogicFilter();
-//
-//        RuleActionEntity<RuleActionEntity.RaffleCenterEntity> ruleActionEntity = null;
-//        //为什么这里使用for循环，如果其中一个元素拦截的话直接就返回，那么for循环还有什么意义呢。
-//        for(String ruleModel: logics){
-//            ILogicFilter<RuleActionEntity.RaffleCenterEntity> logicFilter = logicFilterGroup.get(ruleModel);
-//            RuleMatterEntity ruleMatterEntity = new RuleMatterEntity();
-//            ruleMatterEntity.setUserId(raffleFactorEntity.getUserId());
-//            ruleMatterEntity.setAwardId(raffleFactorEntity.getAwardId());
-//            ruleMatterEntity.setStrategyId(raffleFactorEntity.getStrategyId());
-//            ruleMatterEntity.setRuleModel(ruleModel);
-//
-//            ruleActionEntity = logicFilter.filter(ruleMatterEntity);
-//            // 非放行结果则顺序过滤
-//            log.info("抽奖中规则过滤 userId: {} ruleModel: {} code: {} info: {}", raffleFactorEntity.getUserId(), ruleModel, ruleActionEntity.getCode(), ruleActionEntity.getInfo());
-//            if (!RuleLogicCheckTypeVO.ALLOW.getCode().equals(ruleActionEntity.getCode())) return ruleActionEntity;
-//        }
-//        return ruleActionEntity;
-//
-//    }
+
 }

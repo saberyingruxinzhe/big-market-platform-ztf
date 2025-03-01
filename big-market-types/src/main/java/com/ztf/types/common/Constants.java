@@ -42,6 +42,9 @@ public class Constants {
         //这个key使用向redis中奖品库存消费队列中存取StrategyAwardStockKeyVO对象的
         public static String STRATEGY_AWARD_COUNT_QUERY_KEY = "strategy_award_count_query_key";
 
+        //用于使用获取到规则配置
+        public static String STRATEGY_RULE_WEIGHT_KEY = "strategy_rule_weight_key_";
+
     }
 
 }
