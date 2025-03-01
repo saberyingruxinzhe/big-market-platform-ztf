@@ -3,6 +3,7 @@ package com.ztf.trigger.api;
 import com.ztf.trigger.api.dto.ActivityDrawRequestDTO;
 import com.ztf.trigger.api.dto.ActivityDrawResponseDTO;
 import com.ztf.types.model.Response;
+import org.springframework.web.bind.annotation.RequestParam;
 
 //抽奖活动服务
 public interface IRaffleActivityService {
@@ -21,4 +22,12 @@ public interface IRaffleActivityService {
      */
     Response<ActivityDrawResponseDTO> draw(ActivityDrawRequestDTO request);
 
+
+    /**
+     * 日历签到返利接口
+     *
+     * @param userId 用户ID
+     * @return 签到结果
+     */
+    Response<Boolean> calendarSignRebate(String userId);
 }
