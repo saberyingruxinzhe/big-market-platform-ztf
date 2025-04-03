@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Fuzhengwei bugstack.cn @小傅哥
@@ -50,7 +51,7 @@ public class RaffleActivityControllerTest {
     @Test
     public void test_calendarSignRebate() {
         //如果是一个未知的用户签到，那么会为这个用户创建一个账户，那么最下面的账户将会能够查询到这个账户
-        Response<Boolean> response = raffleActivityService.calendarSignRebate("zhangtiefu");
+        Response<Boolean> response = raffleActivityService.calendarSignRebate("user003");
         log.info("测试结果：{}", JSON.toJSONString(response));
     }
 
@@ -73,6 +74,20 @@ public class RaffleActivityControllerTest {
 
         log.info("请求参数：{}", JSON.toJSONString(request));
         log.info("测试结果：{}", JSON.toJSONString(response));
+    }
+
+    @Test
+    public void test_blacklist_draw() throws InterruptedException {
+        ActivityDrawRequestDTO request = new ActivityDrawRequestDTO();
+        request.setActivityId(100301L);
+        request.setUserId("user003");
+        Response<ActivityDrawResponseDTO> response = raffleActivityService.draw(request);
+
+        log.info("请求参数：{}", JSON.toJSONString(request));
+        log.info("测试结果：{}", JSON.toJSONString(response));
+
+        // 让程序挺住方便测试，也可以去掉
+        new CountDownLatch(1).await();
     }
 
 }
