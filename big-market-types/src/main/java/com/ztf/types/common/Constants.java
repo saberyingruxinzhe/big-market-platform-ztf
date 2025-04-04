@@ -45,6 +45,12 @@ public class Constants {
         //用于使用获取到规则配置
         public static String STRATEGY_RULE_WEIGHT_KEY = "strategy_rule_weight_key_";
 
+
+        /**
+         * 奖品领域
+         */
+        public static String ACTIVITY_ACCOUNT_LOCK = "activity_account_lock_";
+        public static String USER_CREDIT_ACCOUNT_LOCK = "user_credit_account_lock_";
     }
 
 }
