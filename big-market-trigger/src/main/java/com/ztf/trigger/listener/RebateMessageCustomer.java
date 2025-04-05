@@ -4,6 +4,10 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.ztf.domain.activity.model.entity.SkuRechargeEntity;
 import com.ztf.domain.activity.service.IRaffleActivityAccountQuotaService;
+import com.ztf.domain.credit.model.entity.TradeEntity;
+import com.ztf.domain.credit.model.valobj.TradeNameVO;
+import com.ztf.domain.credit.model.valobj.TradeTypeVO;
+import com.ztf.domain.credit.service.ICreditAdjustService;
 import com.ztf.domain.rebate.event.SendRebateMessageEvent;
 import com.ztf.domain.rebate.model.valobj.RebateTypeVO;
 import com.ztf.types.enums.ResponseCode;
@@ -16,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 @Slf4j
 @Component
@@ -24,6 +29,8 @@ public class RebateMessageCustomer {
     private String topic;
     @Resource
     private IRaffleActivityAccountQuotaService raffleActivityAccountQuotaService;
+    @Resource
+    private ICreditAdjustService creditAdjustService;
 
     @RabbitListener(queuesToDeclare = @Queue(value = "${spring.rabbitmq.topic.send_rebate}"))
     public void listener(String message){
@@ -36,11 +43,29 @@ public class RebateMessageCustomer {
             SendRebateMessageEvent.RebateMessage rebateMessage = eventMessage.getData();
             //之前有一个BehaviorType作为行为类型的【是签到还是支付】
             //现在添加一个返利的类型，需要进行区分【返沪sku还是返利积分】
-            if(!RebateTypeVO.SKU.getCode().equals(rebateMessage.getRebateType())){
-                log.info("监听用户行为返利消息 - 非sku奖励暂时不处理 topic: {} message: {}", topic, message);
-                return;
-            }
+
             //2.入账奖励 - 入账奖励是延迟发放的
+
+            switch (rebateMessage.getRebateType()){
+                case "sku":
+                    SkuRechargeEntity skuRechargeEntity = new SkuRechargeEntity();
+                    skuRechargeEntity.setUserId(rebateMessage.getUserId());
+                    skuRechargeEntity.setSku(Long.valueOf(rebateMessage.getRebateConfig()));
+                    skuRechargeEntity.setOutBusinessNo(rebateMessage.getBizId());
+                    //这里调用的是之前是实现的sku入账的功能
+                    raffleActivityAccountQuotaService.createOrder(skuRechargeEntity);
+                    break;
+                case "integral":
+                    TradeEntity tradeEntity = new TradeEntity();
+                    tradeEntity.setUserId(rebateMessage.getUserId());
+                    tradeEntity.setTradeName(TradeNameVO.REBATE);
+                    tradeEntity.setTradeType(TradeTypeVO.FORWARD);
+                    tradeEntity.setAmount(new BigDecimal(rebateMessage.getRebateConfig()));
+                    tradeEntity.setOutBusinessNo(rebateMessage.getBizId());
+                    //新增的积分领域方法
+                    creditAdjustService.createOrder(tradeEntity);
+                    break;
+            }
             /**
              * 这里的思想
              * controller中的接口中的createOrder方法实现的是：
@@ -49,12 +74,7 @@ public class RebateMessageCustomer {
              * 所以需要即时实现的只有插入订单到数据库，而对于账户余额的修改是在这个listener中的createOrder进行的
              * 在这里对于总、日、月的余额进行修改
              */
-            SkuRechargeEntity skuRechargeEntity = new SkuRechargeEntity();
-            skuRechargeEntity.setUserId(rebateMessage.getUserId());
-            skuRechargeEntity.setSku(Long.valueOf(rebateMessage.getRebateConfig()));
-            skuRechargeEntity.setOutBusinessNo(rebateMessage.getBizId());
-            //这里调用的是之前是实现的sku入账的功能
-            raffleActivityAccountQuotaService.createOrder(skuRechargeEntity);
+
         } catch (AppException e) {
             if (ResponseCode.INDEX_DUP.getCode().equals(e.getCode())) {
                 log.warn("监听用户行为返利消息，消费重复 topic: {} message: {}", topic, message, e);

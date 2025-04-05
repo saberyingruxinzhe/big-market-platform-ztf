@@ -687,6 +687,98 @@ VALUES
 	(14,'xiaofuge2',100301,'测试活动',100006,'932807566378','2024-05-04 05:57:20','used','2024-05-04 13:57:20','2024-05-04 13:57:20'),
 	(15,'xiaofuge2',100301,'测试活动',100006,'623497872684','2024-05-04 05:57:32','used','2024-05-04 13:57:32','2024-05-04 13:57:32');
 
+
+
+DROP TABLE IF EXISTS `user_credit_order_000`;
+
+CREATE TABLE `user_credit_order_000` (
+                                         `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+                                         `user_id` varchar(32) NOT NULL COMMENT '用户ID',
+                                         `order_id` varchar(12) NOT NULL COMMENT '订单ID',
+                                         `trade_name` varchar(32) NOT NULL COMMENT '交易名称',
+                                         `trade_type` varchar(8) NOT NULL DEFAULT 'forward' COMMENT '交易类型；forward-正向、reverse-逆向',
+                                         `trade_amount` decimal(10,2) NOT NULL COMMENT '交易金额',
+                                         `out_business_no` varchar(64) NOT NULL COMMENT '业务仿重ID - 外部透传。返利、行为等唯一标识',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         PRIMARY KEY (`id`),
+                                         UNIQUE KEY `uq_order_id` (`order_id`),
+                                         UNIQUE KEY `uq_out_business_no` (`out_business_no`),
+                                         KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户积分订单记录';
+
+
+
+# 转储表 user_credit_order_001
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_credit_order_001`;
+
+CREATE TABLE `user_credit_order_001` (
+                                         `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+                                         `user_id` varchar(32) NOT NULL COMMENT '用户ID',
+                                         `order_id` varchar(12) NOT NULL COMMENT '订单ID',
+                                         `trade_name` varchar(32) NOT NULL COMMENT '交易名称',
+                                         `trade_type` varchar(8) NOT NULL DEFAULT 'forward' COMMENT '交易类型；forward-正向、reverse-逆向',
+                                         `trade_amount` decimal(10,2) NOT NULL COMMENT '交易金额',
+                                         `out_business_no` varchar(64) NOT NULL COMMENT '业务仿重ID - 外部透传。返利、行为等唯一标识',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         PRIMARY KEY (`id`),
+                                         UNIQUE KEY `uq_order_id` (`order_id`),
+                                         UNIQUE KEY `uq_out_business_no` (`out_business_no`),
+                                         KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户积分订单记录';
+
+
+
+# 转储表 user_credit_order_002
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_credit_order_002`;
+
+CREATE TABLE `user_credit_order_002` (
+                                         `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+                                         `user_id` varchar(32) NOT NULL COMMENT '用户ID',
+                                         `order_id` varchar(12) NOT NULL COMMENT '订单ID',
+                                         `trade_name` varchar(32) NOT NULL COMMENT '交易名称',
+                                         `trade_type` varchar(8) NOT NULL DEFAULT 'forward' COMMENT '交易类型；forward-正向、reverse-逆向',
+                                         `trade_amount` decimal(10,2) NOT NULL COMMENT '交易金额',
+                                         `out_business_no` varchar(64) NOT NULL COMMENT '业务仿重ID - 外部透传。返利、行为等唯一标识',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         PRIMARY KEY (`id`),
+                                         UNIQUE KEY `uq_order_id` (`order_id`),
+                                         UNIQUE KEY `uq_out_business_no` (`out_business_no`),
+                                         KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户积分订单记录';
+
+
+
+# 转储表 user_credit_order_003
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user_credit_order_003`;
+
+CREATE TABLE `user_credit_order_003` (
+                                         `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+                                         `user_id` varchar(32) NOT NULL COMMENT '用户ID',
+                                         `order_id` varchar(12) NOT NULL COMMENT '订单ID',
+                                         `trade_name` varchar(32) NOT NULL COMMENT '交易名称',
+                                         `trade_type` varchar(8) NOT NULL DEFAULT 'forward' COMMENT '交易类型；forward-正向、reverse-逆向',
+                                         `trade_amount` decimal(10,2) NOT NULL COMMENT '交易金额',
+                                         `out_business_no` varchar(64) NOT NULL COMMENT '业务仿重ID - 外部透传。返利、行为等唯一标识',
+                                         `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+                                         `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+                                         PRIMARY KEY (`id`),
+                                         UNIQUE KEY `uq_order_id` (`order_id`),
+                                         UNIQUE KEY `uq_out_business_no` (`out_business_no`),
+                                         KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户积分订单记录';
+
+
+
+
 /*!40000 ALTER TABLE `user_raffle_order_003` ENABLE KEYS */;
 UNLOCK TABLES;
 
