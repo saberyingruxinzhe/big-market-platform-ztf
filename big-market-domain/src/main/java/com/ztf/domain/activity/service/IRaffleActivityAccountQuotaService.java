@@ -1,6 +1,7 @@
 package com.ztf.domain.activity.service;
 
 import com.ztf.domain.activity.model.entity.ActivityAccountEntity;
+import com.ztf.domain.activity.model.entity.DeliveryOrderEntity;
 import com.ztf.domain.activity.model.entity.SkuRechargeEntity;
 
 //抽奖活动账户额度服务
@@ -14,6 +15,12 @@ public interface IRaffleActivityAccountQuotaService {
      * 2. 对于用户可获得的抽奖次数，比如首次进来就有一次，则是依赖于运营配置的动作，在前端页面上。用户点击后，可以获得一次抽奖次数。
      */
     String createOrder(SkuRechargeEntity skuRechargeEntity);
+
+    /**
+     * 订单出货 - 积分充值
+     * @param deliveryOrderEntity 出货单实体对象
+     */
+    void updateOrder(DeliveryOrderEntity deliveryOrderEntity);
 
     /**
      * 查询活动账户 - 日，参与次数

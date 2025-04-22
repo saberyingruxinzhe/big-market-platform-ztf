@@ -102,8 +102,5 @@ public class RaffleActivityPartakeService extends AbstractRaffleActivityPartake{
         return userRaffleOrder;
     }
 
-    @Override
-    public ActivityAccountEntity queryActivityAccountEntity(Long activityId, String userId) {
-        return activityRepository.queryActivityAccountEntity(activityId, userId);
-    }
+
 }

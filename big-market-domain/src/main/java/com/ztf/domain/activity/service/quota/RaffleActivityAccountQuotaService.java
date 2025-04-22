@@ -6,18 +6,20 @@ import com.ztf.domain.activity.model.valobj.ActivitySkuStockKeyVO;
 import com.ztf.domain.activity.model.valobj.OrderStateVO;
 import com.ztf.domain.activity.repository.IActivityRepository;
 import com.ztf.domain.activity.service.IRaffleActivitySkuStockService;
+import com.ztf.domain.activity.service.quota.policy.ITradePolicy;
 import com.ztf.domain.activity.service.quota.rule.factory.DefaultActivityChainFactory;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
 //抽奖活动服务
 @Service
 public class RaffleActivityAccountQuotaService extends AbstractRaffleActivityAccountQuota implements IRaffleActivitySkuStockService {
 
-    public RaffleActivityAccountQuotaService(IActivityRepository activityRepository, DefaultActivityChainFactory defaultActivityChainFactory) {
-        super(activityRepository, defaultActivityChainFactory);
+    public RaffleActivityAccountQuotaService(IActivityRepository activityRepository, DefaultActivityChainFactory defaultActivityChainFactory, Map<String, ITradePolicy> tradePolicyGroup) {
+        super(activityRepository, defaultActivityChainFactory, tradePolicyGroup);
     }
 
     @Override
@@ -49,10 +51,6 @@ public class RaffleActivityAccountQuotaService extends AbstractRaffleActivityAcc
                 .build();
     }
 
-    @Override
-    protected void doSaveOrder(CreateQuotaOrderAggregate createQuotaOrderAggregate) {
-        activityRepository.doSaveOrder(createQuotaOrderAggregate);
-    }
 
     @Override
     public ActivitySkuStockKeyVO takeQueueValue() throws InterruptedException {
@@ -72,6 +70,11 @@ public class RaffleActivityAccountQuotaService extends AbstractRaffleActivityAcc
     @Override
     public void clearActivitySkuStock(Long sku) {
         activityRepository.clearActivitySkuStock(sku);
+    }
+
+    @Override
+    public void updateOrder(DeliveryOrderEntity deliveryOrderEntity) {
+        activityRepository.updateOrder(deliveryOrderEntity);
     }
 
     @Override

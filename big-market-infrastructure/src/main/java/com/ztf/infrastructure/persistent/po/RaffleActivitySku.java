@@ -2,6 +2,7 @@ package com.ztf.infrastructure.persistent.po;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 //抽奖活动sku持久化对象
@@ -32,6 +33,11 @@ public class RaffleActivitySku {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 商品金额【积分】
+     */
+    private BigDecimal productAmount;
 
     /**
      * 更新时间

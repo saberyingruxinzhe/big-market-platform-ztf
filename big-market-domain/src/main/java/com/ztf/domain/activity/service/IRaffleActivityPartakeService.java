@@ -24,5 +24,5 @@ public interface IRaffleActivityPartakeService {
      */
     UserRaffleOrderEntity createOrder(PartakeRaffleActivityEntity partakeRaffleActivityEntity);
 
-    ActivityAccountEntity queryActivityAccountEntity(Long activityId, String userId);
+
 }

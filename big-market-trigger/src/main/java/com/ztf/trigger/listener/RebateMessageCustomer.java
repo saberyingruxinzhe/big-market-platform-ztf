@@ -3,6 +3,7 @@ package com.ztf.trigger.listener;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.TypeReference;
 import com.ztf.domain.activity.model.entity.SkuRechargeEntity;
+import com.ztf.domain.activity.model.valobj.OrderTradeTypeVO;
 import com.ztf.domain.activity.service.IRaffleActivityAccountQuotaService;
 import com.ztf.domain.credit.model.entity.TradeEntity;
 import com.ztf.domain.credit.model.valobj.TradeNameVO;
@@ -52,6 +53,7 @@ public class RebateMessageCustomer {
                     skuRechargeEntity.setUserId(rebateMessage.getUserId());
                     skuRechargeEntity.setSku(Long.valueOf(rebateMessage.getRebateConfig()));
                     skuRechargeEntity.setOutBusinessNo(rebateMessage.getBizId());
+                    skuRechargeEntity.setOrderTradeType(OrderTradeTypeVO.rebate_no_pay_trade);
                     //这里调用的是之前是实现的sku入账的功能
                     raffleActivityAccountQuotaService.createOrder(skuRechargeEntity);
                     break;
